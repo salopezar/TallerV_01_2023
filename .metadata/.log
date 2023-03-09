@@ -560,3 +560,109 @@ Command-line arguments:  -os linux -ws gtk -arch x86_64
 
 !ENTRY org.eclipse.cdt.core 1 0 2023-03-03 10:59:15.106
 !MESSAGE Indexed 'IntroGPIOx' (3 sources, 53 headers) in 0.489 sec: 1,949 declarations; 2,811 references; 0 unresolved inclusions; 2 syntax errors; 2 unresolved names (0.042%)
+!SESSION 2023-03-09 09:18:46.228 -----------------------------------------------
+eclipse.buildId=Version 1.10.1
+java.version=11.0.14.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=es_CO
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2023-03-09 09:18:55.380
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2023-03-09 09:18:55.451
+!MESSAGE Log4j initialized with config file /home/santiago/Documentos/GitHub/TallerV_01_2023/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2023-03-09 09:19:00.961
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2023-03-09 09:19:41.470
+!MESSAGE Indexed 'Taller_Semana_5' (3 sources, 0 headers) in 0,162 sec: 67 declarations; 36 references; 11 unresolved inclusions; 0 syntax errors; 31 unresolved names (23 %)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2023-03-09 09:52:29.803
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: /home/santiago/Documentos/GitHub/TallerV_01_2023/Taller_Semana_5/Debug/Taller_Semana_5.map (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:263)
+	at elf_analyzer.ElfAnalyzerView.lambda$7(ElfAnalyzerView.java:503)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2023-03-09 09:52:30.820
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: /home/santiago/Documentos/GitHub/TallerV_01_2023/Taller_Semana_5/Debug/Taller_Semana_5.map (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:263)
+	at elf_analyzer.ElfAnalyzerView.lambda$7(ElfAnalyzerView.java:503)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2023-03-09 10:11:09.691
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: /home/santiago/Documentos/GitHub/TallerV_01_2023/Taller_Semana_5/Debug/Taller_Semana_5.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:915)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$16(StackAnalyzerView.java:1277)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2023-03-09 10:16:20.928
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.Exception: File: /home/santiago/Documentos/GitHub/TallerV_01_2023/Taller_Semana_5/Debug/Taller_Semana_5.elfdo not exists
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:56)
+	at com.st.stm32cube.ide.mcu.utils.assembly.Disassembler.<init>(Disassembler.java:84)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:915)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$16(StackAnalyzerView.java:1277)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2023-03-09 10:16:21.779
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: /home/santiago/Documentos/GitHub/TallerV_01_2023/Taller_Semana_5/Debug/Taller_Semana_5.map (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeMemConfig(BuildDataProviderMap.java:392)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:80)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:263)
+	at elf_analyzer.ElfAnalyzerView.lambda$7(ElfAnalyzerView.java:503)
+	at java.base/java.lang.Thread.run(Thread.java:829)
+
+!ENTRY com.st.stm32cube.ide.mcu.buildanalyzer.ui 1 0 2023-03-09 10:16:22.799
+!MESSAGE Failed to parse map file
+!STACK 0
+java.io.FileNotFoundException: /home/santiago/Documentos/GitHub/TallerV_01_2023/Taller_Semana_5/Debug/Taller_Semana_5.map (No such file or directory)
+	at java.base/java.io.FileInputStream.open0(Native Method)
+	at java.base/java.io.FileInputStream.open(FileInputStream.java:219)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:157)
+	at java.base/java.io.FileInputStream.<init>(FileInputStream.java:112)
+	at java.base/java.io.FileReader.<init>(FileReader.java:60)
+	at elf_analyzer.datamodel.BuildDataProviderMap.readFile(BuildDataProviderMap.java:55)
+	at elf_analyzer.datamodel.BuildDataProviderMap.compute(BuildDataProviderMap.java:349)
+	at elf_analyzer.datamodel.BuildDataProviderMap.computeLinkerSymbols(BuildDataProviderMap.java:400)
+	at elf_analyzer.datamodel.BuildData.compute(BuildData.java:102)
+	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:263)
+	at elf_analyzer.ElfAnalyzerView.lambda$7(ElfAnalyzerView.java:503)
+	at java.base/java.lang.Thread.run(Thread.java:829)

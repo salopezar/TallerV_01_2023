@@ -1767,3 +1767,10 @@
 2023-03-03 10:59:14,644 [INFO] ApiDb:447 - User favorites MCUs=[STM32F411CEU7]
 2023-03-03 10:59:14,645 [INFO] ApiDb:443 - Save user favorites file /home/santiago/.stm32cubeide/favorites.boards.txt: 1 item(s)
 2023-03-03 10:59:14,646 [INFO] ApiDb:447 - User favorites Boards=[NUCLEO-F411RE]
+2023-03-09 09:18:55,452 [INFO] Activator:177 - 
+
+
+2023-03-09 09:18:55,454 [INFO] Activator:178 - !SESSION log4j initialized
+2023-03-09 09:19:21,249 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+2023-03-09 09:19:21,250 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Defaulting to no-operation (NOP) logger implementation
+2023-03-09 09:19:21,251 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
