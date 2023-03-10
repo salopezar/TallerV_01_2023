@@ -666,3 +666,21 @@ java.io.FileNotFoundException: /home/santiago/Documentos/GitHub/TallerV_01_2023/
 	at elf_analyzer.ElfAnalyzerView.inputChanged(ElfAnalyzerView.java:263)
 	at elf_analyzer.ElfAnalyzerView.lambda$7(ElfAnalyzerView.java:503)
 	at java.base/java.lang.Thread.run(Thread.java:829)
+!SESSION 2023-03-10 04:34:05.207 -----------------------------------------------
+eclipse.buildId=Version 1.10.1
+java.version=11.0.14.1
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=es_CO
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2023-03-10 04:34:12.776
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2023-03-10 04:34:12.856
+!MESSAGE Log4j initialized with config file /home/santiago/Documentos/GitHub/TallerV_01_2023/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2023-03-10 04:34:18.666
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2023-03-10 04:36:16.382
+!MESSAGE Indexed 'demoGPIO' (3 sources, 0 headers) in 0,168 sec: 67 declarations; 36 references; 11 unresolved inclusions; 0 syntax errors; 31 unresolved names (23 %)

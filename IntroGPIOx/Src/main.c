@@ -18,27 +18,10 @@
 //Libreria para los tipos de variables
 #include <stdint.h>
 
-//Libreria para las variables de tipo booleano
-#include <stdbool.h>
 
-//Libreria para las operaciones matemáticas básicas
-#include <math.h>
-
-#define CONSTANTE 	100
-
-bool variableBooleana = true;
-uint8_t parametro1 = 100;
-uint16_t parametro2 = 173;
-
-//Header para las funciones
-void clearGlobal(void);
 
 int main(void){
-	clearGlobal();
+
 }
 
-void clearGlobal(void){
-	variableBooleana = false;
-	parametro1 = 0;
-	parametro2 = 0;
-}
+

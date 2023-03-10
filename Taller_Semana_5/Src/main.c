@@ -26,6 +26,8 @@
 #include <math.h>
 
 #define CONSTANTE 	100
+#define UNSIGNED	0
+#define SIGNED		1
 
 bool variableBooleana = true;
 uint8_t parametro1 = 100;
@@ -37,12 +39,15 @@ void clearGlobal(void);
 uint8_t getMaxChar(void);
 uint16_t getMaxValue(uint16_t x, uint16_t y, uint16_t z);
 
+uint64_t getMaxVar(uint8_t nBits, uint8_t signo);
+
 int main(void){
 
 	clearGlobal();
 
 	parametro1 = getMaxChar();
 	parametro3 = getMaxValue(100, 200, 20);
+	parametro4 = getMaxVar()
 
 
 }
@@ -72,6 +77,26 @@ uint16_t getMaxValue(uint16_t x, uint16_t y, uint16_t z){
 		return z;
 
 	}
+}
+
+uint64_t getMaxVar(uint8_t nBits, uint8_t signo){
+
+	uint64_t maxVar;
+
+	if(nBits == 0 || nBits == 16 || nBits == 32 || nBits == 64){
+		if(signo == SIGNED){
+			maxVar = pow(2, nBits)/2 - 1;
+		}else if(signo == UNSIGNED){
+			maxVar = pow(2, nBits) - 1;
+		}else{
+			maxVar = 0;
+		}
+
+	}else{
+		maxVar = 0;
+	}
+
+	return maxVar;
 }
 
 
