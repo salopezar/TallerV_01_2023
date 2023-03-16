@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Delete resource &apos;BasicConfig2.0/Src/stm32f411xx_hal.h&apos;" deleteContents="false" description="Delete resource &apos;BasicConfig2.0/Src/stm32f411xx_hal.h&apos;" element1="/BasicConfig2.0/Src/stm32f411xx_hal.h" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1678819005325"/>
+</session>

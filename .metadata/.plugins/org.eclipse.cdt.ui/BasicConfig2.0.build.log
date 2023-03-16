@@ -1,0 +1,105 @@
+13:37:28 **** Incremental Build of configuration Debug for project BasicConfig2.0 ****
+make clean all 
+rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
+rm -rf ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+rm -rf BasicConfig2.0.elf BasicConfig2.0.list BasicConfig2.0.map default.size.stdout
+ 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f411retx.d" -MT"Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f411retx.o" "../Startup/startup_stm32f411retx.s"
+arm-none-eabi-gcc "../Src/GPIOxDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/GPIOxDriver.d" -MT"Src/GPIOxDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/GPIOxDriver.o"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:161: warning: "RCC" redefined
+  161 | #define RCC   ((RCC_RegDef_t *) RCC_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:789: note: this is the location of the previous definition
+  789 | #define RCC                 ((RCC_TypeDef *) RCC_BASE)
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:170: warning: "RCC_AHB1ENR_CRCEN" redefined
+  170 | #define RCC_AHB1ENR_CRCEN   12
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:4297: note: this is the location of the previous definition
+ 4297 | #define RCC_AHB1ENR_CRCEN                  RCC_AHB1ENR_CRCEN_Msk
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:205: warning: "GPIOA" redefined
+  205 | #define GPIOA   ((GPIOx_RegDef_t *) GPIOA_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:782: note: this is the location of the previous definition
+  782 | #define GPIOA               ((GPIO_TypeDef *) GPIOA_BASE)
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:206: warning: "GPIOB" redefined
+  206 | #define GPIOB   ((GPIOx_RegDef_t *) GPIOB_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:783: note: this is the location of the previous definition
+  783 | #define GPIOB               ((GPIO_TypeDef *) GPIOB_BASE)
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:207: warning: "GPIOC" redefined
+  207 | #define GPIOC   ((GPIOx_RegDef_t *) GPIOC_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:784: note: this is the location of the previous definition
+  784 | #define GPIOC               ((GPIO_TypeDef *) GPIOC_BASE)
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:208: warning: "GPIOD" redefined
+  208 | #define GPIOD   ((GPIOx_RegDef_t *) GPIOD_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:785: note: this is the location of the previous definition
+  785 | #define GPIOD               ((GPIO_TypeDef *) GPIOD_BASE)
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:209: warning: "GPIOE" redefined
+  209 | #define GPIOE   ((GPIOx_RegDef_t *) GPIOE_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:786: note: this is the location of the previous definition
+  786 | #define GPIOE               ((GPIO_TypeDef *) GPIOE_BASE)
+      | 
+In file included from ../Inc/GPIOxDriver.h:12,
+                 from ../Src/main.c:22:
+../Inc/stm32f411xx_hal.h:210: warning: "GPIOH" redefined
+  210 | #define GPIOH   ((GPIOx_RegDef_t *) GPIOH_BASE_ADDR)
+      | 
+In file included from /home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h:154,
+                 from ../Src/main.c:20:
+/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include/stm32f411xe.h:787: note: this is the location of the previous definition
+  787 | #define GPIOH               ((GPIO_TypeDef *) GPIOH_BASE)
+      | 
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc -o "BasicConfig2.0.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/BasicConfig2.0/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="BasicConfig2.0.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: BasicConfig2.0.elf
+ 
+arm-none-eabi-size   BasicConfig2.0.elf 
+   text	   data	    bss	    dec	    hex	filename
+  24344	    476	   1596	  26416	   6730	BasicConfig2.0.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objdump -h -S  BasicConfig2.0.elf  > "BasicConfig2.0.list"
+Finished building: BasicConfig2.0.list
+ 
+
+13:37:29 Build Finished. 0 errors, 8 warnings. (took 586ms)
+
