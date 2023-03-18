@@ -1,4 +1,4 @@
-13:37:28 **** Incremental Build of configuration Debug for project BasicConfig2.0 ****
+09:43:50 **** Build of configuration Debug for project BasicConfig2.0 ****
 make clean all 
 rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
 rm -rf ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
@@ -101,5 +101,5 @@ arm-none-eabi-objdump -h -S  BasicConfig2.0.elf  > "BasicConfig2.0.list"
 Finished building: BasicConfig2.0.list
  
 
-13:37:29 Build Finished. 0 errors, 8 warnings. (took 586ms)
+09:43:50 Build Finished. 0 errors, 8 warnings. (took 363ms)
 

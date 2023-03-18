@@ -1,0 +1,26 @@
+15:19:03 **** Incremental Build of configuration Debug for project taller_Semana_6 ****
+make clean all 
+rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
+rm -rf ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+rm -rf default.size.stdout taller_Semana_6.elf taller_Semana_6.list taller_Semana_6.map
+ 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f411retx.d" -MT"Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f411retx.o" "../Startup/startup_stm32f411retx.s"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -c -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+../Src/main.c:33:10: error: conflicting types for 'Operaciones2'
+   33 | uint32_t Operaciones2(uint8_t tipoOperacion, uint16_t numero){
+      |          ^~~~~~~~~~~~
+../Src/main.c:24:10: note: previous declaration of 'Operaciones2' was here
+   24 | uint32_t Operaciones2(uint8_t tipoOperacion, uint16_t numero1, uint16_t numero2);
+      |          ^~~~~~~~~~~~
+../Src/main.c: In function 'Operaciones2':
+../Src/main.c:36:23: error: expected expression before ':' token
+   36 |  switch(tipoOperacion):{
+      |                       ^
+../Src/main.c:43:1: warning: control reaches end of non-void function [-Wreturn-type]
+   43 | }
+      | ^
+make: *** [Src/subdir.mk:25: Src/main.o] Error 1
+"make clean all" terminated with exit code 2. Build might be incomplete.
+
+15:19:03 Build Failed. 3 errors, 1 warnings. (took 211ms)
+

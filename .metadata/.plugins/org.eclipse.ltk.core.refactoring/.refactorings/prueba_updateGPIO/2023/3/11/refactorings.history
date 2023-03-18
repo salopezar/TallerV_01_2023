@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;prueba_updateGPIO/Drivers/Inc/basicTimer.h&apos; to &apos;BasicTimer.h&apos;" description="Rename resource &apos;basicTimer.h&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="Drivers/Inc/basicTimer.h" name="BasicTimer.h" stamp="1679071917149" updateReferences="true"/>
+</session>

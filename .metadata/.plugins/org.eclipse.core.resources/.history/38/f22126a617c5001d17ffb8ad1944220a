@@ -1,0 +1,4 @@
+Src/GPIOxDriver.o: ../Src/GPIOxDriver.c ../Inc/GPIOxDriver.h \
+ ../Inc/stm32f411xx_hal.h
+../Inc/GPIOxDriver.h:
+../Inc/stm32f411xx_hal.h:

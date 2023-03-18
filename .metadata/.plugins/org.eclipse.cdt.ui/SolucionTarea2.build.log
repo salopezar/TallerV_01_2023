@@ -1,4 +1,4 @@
-20:58:22 **** Incremental Build of configuration Debug for project SolucionTarea2 ****
+18:21:49 **** Incremental Build of configuration Debug for project SolucionTarea2 ****
 make clean all 
 rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
 rm -rf ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
@@ -14,12 +14,12 @@ Finished building target: SolucionTarea2.elf
  
 arm-none-eabi-size   SolucionTarea2.elf 
    text	   data	    bss	    dec	    hex	filename
-  25336	    476	   1588	  27400	   6b08	SolucionTarea2.elf
+  24384	    476	   1588	  26448	   6750	SolucionTarea2.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  SolucionTarea2.elf  > "SolucionTarea2.list"
 Finished building: SolucionTarea2.list
  
 
-20:58:22 Build Finished. 0 errors, 0 warnings. (took 365ms)
+18:21:49 Build Finished. 0 errors, 0 warnings. (took 416ms)
 
