@@ -172,8 +172,9 @@ uint32_t GPIO_ReadPin(GPIO_Handler_t *pPinHandler){
 	return pinValue;
 }
 
-
+/* Definición de la función que cambia el valor de un PINx específico dentro del ODR. */
 void GPIOxTooglePin (GPIO_Handler_t *pPinHandler){
+	// Se cambia el estado del bit específicado dentro del registro del ODR.
 	pPinHandler->pGPIOx->ODR ^= (1 << pPinHandler->GPIO_PinConfig.GPIO_PinNumber);
 }
 

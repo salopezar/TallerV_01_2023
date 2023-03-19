@@ -159,13 +159,16 @@ void GPIO_WritePin(GPIO_Handler_t *pPinHandler, uint8_t newState){
  * Función para leer el estado de un pin especifico
  */
 uint32_t GPIO_ReadPin(GPIO_Handler_t *pPinHandler){
-	// Creamos una variable auxiliar la cual luego retornaremos
+	// Se crea una variable auxiliar que luego se retornará
 	uint32_t pinValue = 0;
 
-	//Se busca limpiar todo menos lo que nos interesa
+	/*Se introduce la máscara que limpia el registro para leer el estado del PINx en
+	  bit menos significativo*/
+	// Definición de la máscara y actualización de la variable pinValue.
 	pinValue = pPinHandler->pGPIOx->IDR & (1 << pPinHandler->GPIO_PinConfig.GPIO_PinNumber);
+	// Se mueve el registro tantas veces a la derecha como lo defina el número del PIN.
 	pinValue = (pPinHandler->pGPIOx->IDR >> pPinHandler->GPIO_PinConfig.GPIO_PinNumber);
-
+	// Se retorna la actualización de pinValue.
 	return pinValue;
 }
 
