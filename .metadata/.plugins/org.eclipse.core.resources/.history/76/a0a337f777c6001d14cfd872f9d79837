@@ -44,7 +44,7 @@
  * crear algunas funciones para utilizar adecuadamente el equipo.
  */
 
- /*************************** TAREA #2 - TALLER V - 2023_01 ****************************************
+ /*************************** TAREA #2 - TALLER V - 2023_01 **************************************
  *
  * El presente programa es una compilación de las configuraciones básicas que se deben tener
  * en cuenta para manipular los registros que utiliza el periférico GPIO (que es el originalmente
@@ -300,7 +300,7 @@ int main(void){
 		for (uint32_t i = 0; i < 1300000; i++);
 
 		//Se crean condicionales IF para ver si el botón está presionado o no.
-		//Si no está presionado:
+		//Si está presionado:
 		if (GPIO_ReadPin(&handlerUserButton) == SET){
 			//Se condiciona la dirección del incremento para la variable auxiliar del contador.
 			if (counter > 60){
@@ -308,7 +308,7 @@ int main(void){
 
 			}
 			/* Se escribe en cada pin de acuerdo (operación &) con el valor del contador
-			 * y la posición del bit que corresponde a cada pin para ir incrementando el valor
+			 * y la posición del bit que corresponde a cada pin para ir decrementando el valor
 			 * binario del segundero
 			 */
 			GPIO_WritePin(&handlerPA7, (0b1 << 0) & counter);
@@ -322,7 +322,7 @@ int main(void){
 			counter++;
 
 		}else{
-			//Si el botón está presionado
+			//Si el botón no está presionado
 			if (GPIO_ReadPin(&handlerUserButton) == RESET){
 				//Se condiciona la dirección del incremento para la variable auxiliar del contador.
 				if (counter < 1){
@@ -330,7 +330,7 @@ int main(void){
 
 				}
 		    /* Se escribe en cada pin de acuerdo (operación &) con el valor del contador
-			* y la posición del bit que corresponde a cada pin para ir decrementando el valor
+			* y la posición del bit que corresponde a cada pin para ir incrementando el valor
 			* binario del segundero
 			*/
 			GPIO_WritePin(&handlerPA7, (0b1 << 0) & counter);
