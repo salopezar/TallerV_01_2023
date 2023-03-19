@@ -109,25 +109,6 @@
  *
  ************************************************ PUNTO 2 **********************************************
  *
- * Para este ítem se pide implementar una función GPIOxTooglePin que reciba un único parámetro del tipo
- * GPIO_Handler_t que básicamente cambie el estado de un determinado PINx, es decir, si se encuentra en
- * estado alto (1) pase a bajo (0) y viceversa. En resumidas cuentas, se propone mediante una operación
- * XOR (^=) definida dentro de la función GPIOxTooglePin cambiar el valor del registro del ODR (Output
- * data register) del puerto GPIOx especificado, entre ese valor actual del registro y una máscara que
- * hace un shift a izquierda como se observa en las últimas líneas del archivo GPIOxDriver.c, cambiando
- * el estado del bit del puerto GPIO (GPIO_PinNumber) que se quiere. En otras palabras, si estaba en
- * estado alto (1) lo lleva a bajo (0) ó viceversa.
- *
- * Aquí, la definición de la función toogle que se analizó anteriormente:
- *
- * void GPIOxTooglePin (GPIO_Handler_t *pPinHandler){
- * pPinHandler->pGPIOx->ODR ^= (1 << pPinHandler->GPIO_PinConfig.GPIO_PinNumber);
- *
- * Además, se define adecuadamente esta función dentro de su correspondiente cabecera GPIOxDriver.h
- *
- *********************************************** PUNTO 3 ***********************************************
- *
- *
  */
 
 //Libreria para los tipos de variables
@@ -136,10 +117,10 @@
 #include <stm32f411xx_hal.h>
 #include <GPIOxDriver.h>
 
-// Se crea una variable auxiliar para probar la solución del numeral 1.
+//Se crea una variable auxiliar para probar la solución del numeral 1.
 uint32_t prueba = 0;
 
-// Se crea la variable necesaria para inicializar el contador del tercer punto.
+
 uint8_t counter = 0;
 
 
@@ -158,7 +139,7 @@ int main(void){
 	GPIO_Handler_t handlerPA7 			= {0};
 	GPIO_Handler_t handlerUserButton	= {0};
 
-	//Se configura el led 2 del microcontrolador para que funcione como un led de estado.
+	//Se decide trabajar con el puerto GPIOA
 	handlerUserLedPin.pGPIOx 								= GPIOA;
 	handlerUserLedPin.GPIO_PinConfig.GPIO_PinNumber			= PIN_5;
 	handlerUserLedPin.GPIO_PinConfig.GPIO_PinMode			= GPIO_MODE_OUT;
