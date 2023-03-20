@@ -89,7 +89,7 @@
  * Pin_A3 que se encuentra apagado (se tiene un 0), pero existe un segundo Pin_A6 que se encuentra
  * encendido (se tiene un 1) para la posición del bit 6 en el IDR, por tanto, mediante la operación
  * shift que se plantea se mueve todo el registro 3 posiciones a la derecha, por lo cual se obtendría 0
- * en la posición 0 y 1 en la posición 3, así: 0b1000. El problema con esta operación es que no se
+ * en la posición 0 y 1 en la posición 5, así: 0b100000. El problema con esta operación es que no se
  * está llegando a lo que se quiere, dado que el Pin_A3 que se desea leer es un 0, por tanto,
  * esta debería ser la lectura. De allí la necesidad de limpiar las posiciones que no interesen
  * en el momento mediante el uso de una máscara que se indicará en (B).
@@ -115,10 +115,9 @@
  * XOR (^=) definida dentro de la función GPIOxTooglePin cambiar el valor del registro del ODR (Output
  * data register) del puerto GPIOx especificado (la operación XOR básicamente retorna un 0 si los estados
  * (alto o bajo) que se operan son iguales y 1 si son diferentes), entre ese valor actual del registro y
- * una máscara que hace un shift a izquierda de un 1 cuantas veces lo indique la posición del bit del
- * registro que se quiere cambiar, como se observa en las últimas líneas del archivo GPIOxDriver.c,
- * cambiando el estado del bit del puerto GPIO que se quiere. En otras palabras, si estaba en estado alto (1)
- * lo lleva a bajo (0) ó viceversa.
+ * una máscara que hace un shift a izquierda como se observa en las últimas líneas del archivo GPIOxDriver.c,
+ * cambiando el estado del bit del puerto GPIO (GPIO_PinNumber) que se quiere. En otras palabras, si estaba
+ * en estado alto (1) lo lleva a bajo (0) ó viceversa.
  *
  * Aquí, la definición de la función toogle que se analizó anteriormente:
  *
@@ -129,13 +128,13 @@
  *
  *********************************************** PUNTO 3 ***********************************************
  *
- * En este ítem se propone realizar un contador de segundos binario que es una buena aproximación a un
+ * En este ítem se propone realizar un contador de segundos binario que se una buena aproximación a un
  * reloj que muestre de una manera simple y elegante la conversión binaria que puede hacerse sobre el
  * sistema convencional en que se toman los segunderos comunes. El montaje consta de 7 diodos LED que se
  * disponen desde el bit menos significativo (posición 0) hasta el más significativo (bit 6) que cuenta
  * la dirección de conteo del reloj binario desde menor a mayor (ascendente) si el boton USER (color azul
  * del microcontrolador) está apagado (sin presionar) y va descendiendo si está presionado. Además,
- * se tiene en cuenta que al tener un minuto 60 segundos, el contador está acotado entre 0 y 60 segundos.
+ * tenga en cuenta que al tener un minuto 60 segundos, el contador está acotado entre 0 y 60 segundos.
  *
  * Visto de izquierda a derecha desde el bit más significativo hasta el menos significativo se configuran
  * como salida los siguientes pines de propósito general GPIO para cada una de las posiciones binarias
@@ -146,16 +145,16 @@
  * de estado para el sistema que se está implementando. Luego, se implementa la configuración del botón USER
  * que interactúa directamente con el usuario para definir la dirección de conteo del sistema. El estado de
  * este botón será fundamental para la decisión del conteo, por ello, es base importante para entender los
- * condicionales que se implementan luego.
+ * ciclos que se implementan luego.
  *
  * Luego de cargar las configuraciones que se hicieron, se implementa la escritura del led de estado que
- * se mantendrá encendido. Dentro del ciclo infinito while de main.c se crea un primer ciclo for que se encarga
+ * se mantendrá encendido. Dentro del ciclo infinito de main.c se crea un primer ciclo for que se encarga
  * de mantener acotado el intervalo de operación del conteo del microcontrolador para que tenga siempre
  * un delay de aproximadamente 1 segundo para que el sistema cuente segundo a segundo, teniendo en cuenta
  * que el microcontrolador tiene una "frecuencia natural de operación" de 16 MHz. Ahora, conociendo que
  * la lectura del estado del boton user define la dirección de conteo, se plantea una condición if que
- * direcciona el programa por la ruta del conteo ascendente en caso que el botón esté en estado bajo y
- * descendente cuando se encuentra en estado alto.
+ * direcciona el programa por la ruta del conteo ascendente en caso que el botón esté en estado alto y
+ * descendente cuando se encuentra en estado bajo.
  *
  * Se crea una variable auxiliar counter que se inicializa en 0 que sirve para definir los incrementos
  * o la disminución del sistema de acuerdo con el estado del botón user. Dentro de los condicionales if
@@ -308,9 +307,9 @@ int main(void){
 				counter =1;
 
 			}
-			/* Se escribe en cada pin de acuerdo  con el valor del contador
-			 * y la posición del bit que corresponde a cada pin (operación &)
-			 * para ir incrementando el valor binario del segundero
+			/* Se escribe en cada pin de acuerdo (operación &) con el valor del contador
+			 * y la posición del bit que corresponde a cada pin para ir incrementando el valor
+			 * binario del segundero
 			 */
 			GPIO_WritePin(&handlerPA7, (0b1 << 0) & counter);
 			GPIO_WritePin(&handlerPC8, ((0b1 << 1) & counter) >> 1);
@@ -330,10 +329,10 @@ int main(void){
 					counter = 60;
 
 				}
-		    /* Se escribe en cada pin de acuerdo  con el valor del contador y la posición del
-		     * bit que corresponde a cada pin (operación &) para ir decrementando el valor
-			 * binario del segundero
-			 */
+		    /* Se escribe en cada pin de acuerdo (operación &) con el valor del contador
+			* y la posición del bit que corresponde a cada pin para ir decrementando el valor
+			* binario del segundero
+			*/
 			GPIO_WritePin(&handlerPA7, (0b1 << 0) & counter);
 			GPIO_WritePin(&handlerPC8, ((0b1 << 1) & counter) >> 1);
 			GPIO_WritePin(&handlerPC7, ((0b1 << 2) & counter) >> 2);
