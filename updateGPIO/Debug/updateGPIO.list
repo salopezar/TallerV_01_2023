@@ -1550,7 +1550,7 @@ int main(void){
  8000fde:	4b14      	ldr	r3, [pc, #80]	; (8001030 <main+0x58>)
  8000fe0:	4a14      	ldr	r2, [pc, #80]	; (8001034 <main+0x5c>)
  8000fe2:	601a      	str	r2, [r3, #0]
-	handlerLed2.GPIO_PinConfig.GPIO_PinNumber			= PIN_5;
+	handlerLed2.GPIO_PinConfig.GPIO_PinNumber		= PIN_5;
  8000fe4:	4b12      	ldr	r3, [pc, #72]	; (8001030 <main+0x58>)
  8000fe6:	2205      	movs	r2, #5
  8000fe8:	711a      	strb	r2, [r3, #4]
@@ -1558,7 +1558,7 @@ int main(void){
  8000fea:	4b11      	ldr	r3, [pc, #68]	; (8001030 <main+0x58>)
  8000fec:	2201      	movs	r2, #1
  8000fee:	715a      	strb	r2, [r3, #5]
-	handlerLed2.GPIO_PinConfig.GPIO_PinOPType			= GPIO_OTYPE_PUSHPULL;
+	handlerLed2.GPIO_PinConfig.GPIO_PinOPType		= GPIO_OTYPE_PUSHPULL;
  8000ff0:	4b0f      	ldr	r3, [pc, #60]	; (8001030 <main+0x58>)
  8000ff2:	2200      	movs	r2, #0
  8000ff4:	721a      	strb	r2, [r3, #8]
@@ -1566,7 +1566,7 @@ int main(void){
  8000ff6:	4b0e      	ldr	r3, [pc, #56]	; (8001030 <main+0x58>)
  8000ff8:	2200      	movs	r2, #0
  8000ffa:	71da      	strb	r2, [r3, #7]
-	handlerLed2.GPIO_PinConfig.GPIO_PinSpeed			= GPIO_OSPEED_FAST;
+	handlerLed2.GPIO_PinConfig.GPIO_PinSpeed		= GPIO_OSPEED_FAST;
  8000ffc:	4b0c      	ldr	r3, [pc, #48]	; (8001030 <main+0x58>)
  8000ffe:	2202      	movs	r2, #2
  8001000:	719a      	strb	r2, [r3, #6]

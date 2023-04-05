@@ -17,50 +17,48 @@
  */
 
 #include <stdint.h>
-#include <stm32f4xx.h>
-
+#include "stm32f4xx.h"
+#include "BasicTimer.h"
 #include "GPIOxDriver.h"
 
-
+// Se define y se inicializa el elemento.
 GPIO_Handler_t handlerOnBoardLed = {0};
 
+BasicTimer_Handler_t handlerTim2 = {0};
+
+/* Se ajustan los parámetros
+ * de la función central del programa
+ */
 int main(void){
 
-  /* Configurar el pin */
+  /* Configuración del LED 2 del microcontrolador */
 	handlerOnBoardLed.pGPIOx 								= GPIOA;
 	handlerOnBoardLed.GPIO_PinConfig.GPIO_PinNumber			= PIN_5;
 	handlerOnBoardLed.GPIO_PinConfig.GPIO_PinMode			= GPIO_MODE_OUT;
 	handlerOnBoardLed.GPIO_PinConfig.GPIO_PinOPType			= GPIO_OTYPE_PUSHPULL;
 	handlerOnBoardLed.GPIO_PinConfig.GPIO_PinPuPdControl	= GPIO_PUPDR_NOTHING;
-	handlerOnBoardLed.GPIO_PinConfig.GPIO_PinSpeed			= GPIO_OSPEED_MEDIUM;
+	handlerOnBoardLed.GPIO_PinConfig.GPIO_PinSpeed			= GPIO_OSPEED_FAST;
 
+	// Se selecciona el TIMER que se elegió trabajar en el programa.
+	handlerTim2.ptrTIMx 	= TIM2;
+
+	// Configuración general en que se va a manejar el timer.
+	handlerTim2.TIMx_Config.TIMx_mode			= BTIMER_MODE_UP;
+	handlerTim2.TIMx_Config.TIMx_period			= 5000;
+	handlerTim2.TIMx_Config.TIMx_speed			= BTIMER_SPEED_1ms;
+
+	// Se carga lo que se hizo sobre el pin A5
 	GPIO_Config(&handlerOnBoardLed);
+	GPIO_WritePin(&handlerOnBoardLed, SET);
 
-	/* Configuración del TIMER */
-	RCC->APB1ENR &= ~RCC_APB1ENR_TIM2EN;
-	RCC->APB1ENR |= RCC_APB1ENR_TIM2EN;
-
-	// Dirección de conteo
-	TIM2->CR1 &= ~TIM_CR1_DIR;
-
-	// Preescaler
-	TIM2->PSC = 16000;
-
-	// Configurar el CNT
-	TIM2->CNT = 0;
-
-	// Configurar ARR
-	TIM2->ARR = 250;
-
-	//Activar el TIMER
-	TIM2->CR1 |= TIM_CR1_CEN;
+	/* Se carga ahora la configuración del TIMER */
+	BasicTimer_Config(&handlerTim2);
 
 	while(1){
 
-		if(TIM2->SR & TIM_SR_UIF){
-			TIM2->SR &= ~TIM_SR_UIF;
-		}
 	}
-
+}
+void BasicTimerX_Callback(void){
+	GPIOxTooglePin(&handlerOnBoardLed);
 }
 

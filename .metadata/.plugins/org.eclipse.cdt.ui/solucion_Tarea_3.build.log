@@ -1,0 +1,28 @@
+18:44:35 **** Build of configuration Debug for project solucion_Tarea_3 ****
+make clean all 
+rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
+rm -rf ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+rm -rf ./Drivers/Src/BasicTimer.d ./Drivers/Src/BasicTimer.o ./Drivers/Src/BasicTimer.su ./Drivers/Src/ExtiDriver.d ./Drivers/Src/ExtiDriver.o ./Drivers/Src/ExtiDriver.su ./Drivers/Src/GPIOxDriver.d ./Drivers/Src/GPIOxDriver.o ./Drivers/Src/GPIOxDriver.su
+rm -rf default.size.stdout solucion_Tarea_3.elf solucion_Tarea_3.list solucion_Tarea_3.map
+ 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f411retx.d" -MT"Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f411retx.o" "../Startup/startup_stm32f411retx.s"
+arm-none-eabi-gcc "../Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/main.d" -MT"Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/main.o"
+arm-none-eabi-gcc "../Src/syscalls.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/syscalls.d" -MT"Src/syscalls.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/syscalls.o"
+arm-none-eabi-gcc "../Src/sysmem.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/sysmem.d" -MT"Src/sysmem.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/sysmem.o"
+arm-none-eabi-gcc "../Drivers/Src/BasicTimer.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/BasicTimer.d" -MT"Drivers/Src/BasicTimer.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/BasicTimer.o"
+arm-none-eabi-gcc "../Drivers/Src/ExtiDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/ExtiDriver.d" -MT"Drivers/Src/ExtiDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/ExtiDriver.o"
+arm-none-eabi-gcc "../Drivers/Src/GPIOxDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/GPIOxDriver.d" -MT"Drivers/Src/GPIOxDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/GPIOxDriver.o"
+arm-none-eabi-gcc -o "solucion_Tarea_3.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/solucion_Tarea_3/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="solucion_Tarea_3.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: solucion_Tarea_3.elf
+ 
+arm-none-eabi-size   solucion_Tarea_3.elf 
+   text	   data	    bss	    dec	    hex	filename
+  25520	    476	   1620	  27616	   6be0	solucion_Tarea_3.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objdump -h -S  solucion_Tarea_3.elf  > "solucion_Tarea_3.list"
+Finished building: solucion_Tarea_3.list
+ 
+
+18:44:35 Build Finished. 0 errors, 0 warnings. (took 616ms)
+

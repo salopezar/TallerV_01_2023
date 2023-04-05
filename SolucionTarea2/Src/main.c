@@ -174,8 +174,6 @@
 #include <stm32f411xx_hal.h>
 #include <GPIOxDriver.h>
 
-// Se crea una variable auxiliar para probar la solución del numeral 1.
-uint32_t prueba = 0;
 
 // Se crea la variable necesaria para inicializar el contador del tercer punto.
 uint8_t counter = 0;
@@ -290,10 +288,14 @@ int main(void){
 	GPIO_WritePin(&handlerUserLedPin, SET);
 
 	// Prueba de efectividad del punto 1
+	// Se crea una variable auxiliar para probar la solución del numeral 1.
+	uint32_t prueba = 0;
 	// Se llama la función ya definida para leer el estado del Pin User del micro.
 	GPIO_ReadPin(&handlerUserLedPin);
 	// Se actualiza el valor de la variable de prueba para verificar el estado del Pin User.
-	prueba = GPIO_ReadPin(&handlerUserLedPin);
+		prueba = GPIO_ReadPin(&handlerUserLedPin);
+		//Retorno del estado de la prueba
+		(void) prueba;
 
 	//Este es el ciclo principal, donde se ejecuta todo el programa
 	while(1){

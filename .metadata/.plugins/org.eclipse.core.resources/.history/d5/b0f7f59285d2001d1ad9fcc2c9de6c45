@@ -1,0 +1,30 @@
+/*
+ * Gpio_test.c
+ *
+ *  Created on: 3/04/2023
+ *      Author: santiago
+ */
+#include <stdint.h>
+#include "stm32f4xx.h"
+#include "GPIOxDriver.h"
+
+uint8_t entrada = 0;
+GPIO_Handler_t handlerPinDT 	= {0};
+void init_Hardware (void);
+int main (void){
+
+	while(1){
+
+		entrada = GPIO_ReadPin(&handlerPinDT);
+	}
+}
+
+void init_Hardware (void){
+	handlerPinDT.pGPIOx 								= GPIOC;
+	handlerPinDT.GPIO_PinConfig.GPIO_PinNumber			= PIN_12;
+	handlerPinDT.GPIO_PinConfig.GPIO_PinMode			= GPIO_MODE_IN;
+	handlerPinDT.GPIO_PinConfig.GPIO_PinPuPdControl		= GPIO_PUPDR_NOTHING;
+
+    // Se carga la configuración.
+	GPIO_Config(&handlerPinDT);
+}

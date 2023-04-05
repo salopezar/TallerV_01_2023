@@ -1,0 +1,18 @@
+08:24:59 **** Build of configuration Debug for project Ejemplo_punteros ****
+make clean all 
+rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
+rm -rf ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
+rm -rf Ejemplo_punteros.elf Ejemplo_punteros.list Ejemplo_punteros.map default.size.stdout
+ 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Startup/startup_stm32f411retx.d" -MT"Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Startup/startup_stm32f411retx.o" "../Startup/startup_stm32f411retx.s"
+arm-none-eabi-gcc "../Src/GPIOxDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/GPIOxDriver.d" -MT"Src/GPIOxDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/GPIOxDriver.o"
+In file included from ../Src/GPIOxDriver.c:13:
+../Inc/GPIOxDriver.h:12:10: fatal error: stm32f411xx_hal.h: No such file or directory
+   12 | #include "stm32f411xx_hal.h"
+      |          ^~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make: *** [Src/subdir.mk:28: Src/GPIOxDriver.o] Error 1
+"make clean all" terminated with exit code 2. Build might be incomplete.
+
+08:24:59 Build Failed. 2 errors, 0 warnings. (took 216ms)
+
