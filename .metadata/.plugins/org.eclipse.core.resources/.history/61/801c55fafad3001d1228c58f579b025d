@@ -64,11 +64,8 @@ char flagButtonSW 	= 0;
 char flagPinDT 		= 0;
 
 
-// Definición del contador para los números
+// Definición del contador
 uint8_t counter = 0;
-
-// Definición del contador para el snake
-uint8_t counterS = 0;
 
 //Definición de elementos necesarios para el DISPLAY
 GPIO_Handler_t handlerDisplay_Izq = {0};
@@ -93,9 +90,6 @@ void BasicTimer2_Callback(void);
 void callback_extInt11(void);
 void callback_extInt15(void);
 void BasicTimer5_Callback(void);
-// Funciones para el snake game
-void showSegment (void);
-void snakeGame(uint8_t posAngular);
 
 
 /* Se ajustan los parámetros
@@ -108,70 +102,34 @@ int main(void){
 
 	while(1){
 
-		switch (flagButtonSW){
-
-		case 0:
-
-			/* Se definen las condiciones generales para la rotación del ENCODER */
-			// Se considera que cuando el encoder gire en sentido horario,
-			// hay incremento en el valor.
-			if(flagClock){
-				if((GPIO_ReadPin(&handlerPinDT)) == 1){
-					if (counter >= 99) {
-						counter = 99;
-					}
-					else{
-						counter++;
-					}
+		/* Se definen las condiciones generales para la rotación del ENCODER */
+		// Se considera que cuando el encoder gire en sentido horario,
+		// hay incremento en el valor.
+		if(flagClock){
+			if((GPIO_ReadPin(&handlerPinDT)) == 1){
+				if (counter >= 99) {
+					counter = 99;
 				}
-				/* Se considera que cuando el encoder gire en sentido antihorario,
-			 	   hay disminución en el valor. */
-				else if((GPIO_ReadPin(&handlerPinDT)) == 0){
-					// Se restringe el intervalo de operación del contador entre 0 y 99.
-					if(counter <= 0){
-					counter = 0;
-					}
-					else{
-						counter--;
-					}
-
+				else{
+					counter++;
 				}
-				// Se baja la bandera del exti.
-				flagClock = 0;
 			}
-			showNumber();
-			break;
-
-		case 1:
-
-			if(flagClock){
-				if((GPIO_ReadPin(&handlerPinDT)) == 1){
-					if (counterS >= 11) {
-						counterS = 0;
-					}
-					else{
-						counterS++;
-					}
+			/* Se considera que cuando el encoder gire en sentido antihorario,
+		 	   hay disminución en el valor. */
+			else if((GPIO_ReadPin(&handlerPinDT)) == 0){
+				// Se restringe el intervalo de operación del contador entre 0 y 99.
+				if(counter <= 0){
+				counter = 0;
 				}
-				/* Se considera que cuando el encoder gire en sentido antihorario,
-			 	   hay disminución en el valor. */
-				else if((GPIO_ReadPin(&handlerPinDT)) == 0){
-					// Se restringe el intervalo de operación del contador entre 0 y 99.
-					if(counterS <= 0){
-					counterS = 11;
-					}
-					else{
-						counterS--;
-					}
-
+				else{
+					counter--;
 				}
-				// Se baja la bandera del exti.
-				flagClock = 0;
+
 			}
-			showSegment();
-			break;
-
+			// Se baja la bandera del exti.
+			flagClock = 0;
 		}
+		showNumber();
 	}
 }
 
@@ -287,20 +245,6 @@ void showDisplay(uint8_t numero){
 	}
 
 }
-
-// Se crea esta función para mostrar los segmentos en el display.
-void showSegment (void){
-	if(counterS == 0 || counterS == 5 || counterS == 6 || counterS == 9 || counterS == 10 || counterS == 11){
-		GPIO_WritePin(&handlerDisplay_Izq, 0);
-		GPIO_WritePin(&handlerDisplay_Der, 1);
-		snakeGame(counterS);
-	}else if(counterS == 1 || counterS == 2 || counterS == 3 || counterS == 4 || counterS == 7 || counterS == 8){
-		GPIO_WritePin(&handlerDisplay_Izq, 1);
-		GPIO_WritePin(&handlerDisplay_Der, 0);
-		snakeGame(counterS);
-	}
-}
-
 
 void snakeGame (uint8_t posAngular){
 	switch (posAngular){
@@ -422,7 +366,7 @@ void snakeGame (uint8_t posAngular){
 		GPIO_WritePin(&handlerPin_g, SET);
 		break;
 
-	case 12:{
+	case ALL_OFF:{
 		GPIO_WritePin(&handlerPin_a, SET);
 		GPIO_WritePin(&handlerPin_b, SET);
 		GPIO_WritePin(&handlerPin_c, SET);

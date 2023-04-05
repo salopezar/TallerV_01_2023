@@ -146,8 +146,8 @@ int main(void){
 
 			if(flagClock){
 				if((GPIO_ReadPin(&handlerPinDT)) == 1){
-					if (counterS >= 11) {
-						counterS = 0;
+					if (counterS >= 12) {
+						counterS = 1;
 					}
 					else{
 						counterS++;
@@ -157,8 +157,8 @@ int main(void){
 			 	   hay disminución en el valor. */
 				else if((GPIO_ReadPin(&handlerPinDT)) == 0){
 					// Se restringe el intervalo de operación del contador entre 0 y 99.
-					if(counterS <= 0){
-					counterS = 11;
+					if(counterS <= 1){
+					counterS = 12;
 					}
 					else{
 						counterS--;
@@ -290,11 +290,11 @@ void showDisplay(uint8_t numero){
 
 // Se crea esta función para mostrar los segmentos en el display.
 void showSegment (void){
-	if(counterS == 0 || counterS == 5 || counterS == 6 || counterS == 9 || counterS == 10 || counterS == 11){
+	if(7 || 12){
 		GPIO_WritePin(&handlerDisplay_Izq, 0);
 		GPIO_WritePin(&handlerDisplay_Der, 1);
 		snakeGame(counterS);
-	}else if(counterS == 1 || counterS == 2 || counterS == 3 || counterS == 4 || counterS == 7 || counterS == 8){
+	}else{
 		GPIO_WritePin(&handlerDisplay_Izq, 1);
 		GPIO_WritePin(&handlerDisplay_Der, 0);
 		snakeGame(counterS);

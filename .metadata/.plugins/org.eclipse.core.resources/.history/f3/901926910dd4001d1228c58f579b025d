@@ -146,8 +146,8 @@ int main(void){
 
 			if(flagClock){
 				if((GPIO_ReadPin(&handlerPinDT)) == 1){
-					if (counterS >= 11) {
-						counterS = 0;
+					if (counterS >= 12) {
+						counterS = 1;
 					}
 					else{
 						counterS++;
@@ -157,8 +157,8 @@ int main(void){
 			 	   hay disminución en el valor. */
 				else if((GPIO_ReadPin(&handlerPinDT)) == 0){
 					// Se restringe el intervalo de operación del contador entre 0 y 99.
-					if(counterS <= 0){
-					counterS = 11;
+					if(counterS <= 1){
+					counterS = 12;
 					}
 					else{
 						counterS--;

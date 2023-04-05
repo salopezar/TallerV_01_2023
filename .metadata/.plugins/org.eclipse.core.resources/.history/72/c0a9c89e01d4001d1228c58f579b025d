@@ -93,9 +93,6 @@ void BasicTimer2_Callback(void);
 void callback_extInt11(void);
 void callback_extInt15(void);
 void BasicTimer5_Callback(void);
-// Funciones para el snake game
-void showSegment (void);
-void snakeGame(uint8_t posAngular);
 
 
 /* Se ajustan los parámetros
@@ -140,14 +137,13 @@ int main(void){
 				flagClock = 0;
 			}
 			showNumber();
-			break;
 
 		case 1:
 
 			if(flagClock){
 				if((GPIO_ReadPin(&handlerPinDT)) == 1){
-					if (counterS >= 11) {
-						counterS = 0;
+					if (counterS >= 12) {
+						counterS = 12;
 					}
 					else{
 						counterS++;
@@ -157,8 +153,8 @@ int main(void){
 			 	   hay disminución en el valor. */
 				else if((GPIO_ReadPin(&handlerPinDT)) == 0){
 					// Se restringe el intervalo de operación del contador entre 0 y 99.
-					if(counterS <= 0){
-					counterS = 11;
+					if(counterS <= 1){
+					counterS = 0;
 					}
 					else{
 						counterS--;
@@ -169,7 +165,6 @@ int main(void){
 				flagClock = 0;
 			}
 			showSegment();
-			break;
 
 		}
 	}
@@ -290,14 +285,14 @@ void showDisplay(uint8_t numero){
 
 // Se crea esta función para mostrar los segmentos en el display.
 void showSegment (void){
-	if(counterS == 0 || counterS == 5 || counterS == 6 || counterS == 9 || counterS == 10 || counterS == 11){
+	if(7 || 12){
 		GPIO_WritePin(&handlerDisplay_Izq, 0);
 		GPIO_WritePin(&handlerDisplay_Der, 1);
-		snakeGame(counterS);
-	}else if(counterS == 1 || counterS == 2 || counterS == 3 || counterS == 4 || counterS == 7 || counterS == 8){
+		snakeGame(counter2);
+	}else{
 		GPIO_WritePin(&handlerDisplay_Izq, 1);
 		GPIO_WritePin(&handlerDisplay_Der, 0);
-		snakeGame(counterS);
+		snakeGame(counter2);
 	}
 }
 
