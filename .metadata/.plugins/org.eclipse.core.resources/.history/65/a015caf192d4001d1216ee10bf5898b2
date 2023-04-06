@@ -673,5 +673,5 @@ void callback_extInt11(void){
 
 // Interrupción para definir el modo.
 void callback_extInt15(void){
-	flagButtonSW ^= 1;
+	flagButtonSW = 1;
 }
