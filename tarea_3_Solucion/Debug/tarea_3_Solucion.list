@@ -37,13 +37,13 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING, OCTETS
  16 .debug_macro  0000f999  00000000  00000000  000237d0  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 17 .debug_line   0000343c  00000000  00000000  00033169  2**0
+ 17 .debug_line   00003441  00000000  00000000  00033169  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_str    00055f47  00000000  00000000  000365a5  2**0
+ 18 .debug_str    00055f47  00000000  00000000  000365aa  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .comment      00000050  00000000  00000000  0008c4ec  2**0
+ 19 .comment      00000050  00000000  00000000  0008c4f1  2**0
                   CONTENTS, READONLY
- 20 .debug_frame  00001ee0  00000000  00000000  0008c53c  2**2
+ 20 .debug_frame  00001ee0  00000000  00000000  0008c544  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 Disassembly of section .text:
@@ -4719,7 +4719,7 @@ void GPIOxTooglePin(GPIO_Handler_t *pPinHandler){
 	...
 
 08002264 <main>:
-
+void init_Hardware(void);
 
 /* Se ajustan los parámetros
  * de la función central del programa
@@ -4731,9 +4731,11 @@ int main(void){
 	//Se inician todos los elementos necesarios del sistema.
 	init_Hardware();
  8002268:	f000 fc10 	bl	8002a8c <init_Hardware>
-
-	while(1){
-
+		 * de acuerdo con el SW button del encoder, se tiene una bandera flagButtonSW
+		 * que indica el estado de dicho botón, por tanto, si está en bajo por defecto
+		 * el sistema entrará en el modo contador y si se presiona, se pasará al modo
+		 * snake game o juego de la culebrita.
+		 */
 		switch (flagButtonSW){
  800226c:	4b36      	ldr	r3, [pc, #216]	; (8002348 <main+0xe4>)
  800226e:	781b      	ldrb	r3, [r3, #0]
@@ -4742,11 +4744,11 @@ int main(void){
  8002274:	2b01      	cmp	r3, #1
  8002276:	d033      	beq.n	80022e0 <main+0x7c>
  8002278:	e7f8      	b.n	800226c <main+0x8>
-		case 0:
-
-			/* Se definen las condiciones generales para la rotación del ENCODER */
-			// Se considera que cuando el encoder gire en sentido horario,
-			// hay incremento en el valor.
+			 * del pin de datos (Pin data) con la señal del reloj, se encuentra
+			 * que si la lectura del pin de datos es 1, el contador debe ir aumentando
+			 * y si es 0, debe ir disminuyendo. Además, recuerde que se toman como
+			 * referencia los flancos de bajada en la configuración.
+			 */
 			if(flagClock){
  800227a:	4b34      	ldr	r3, [pc, #208]	; (800234c <main+0xe8>)
  800227c:	781b      	ldrb	r3, [r3, #0]
@@ -4817,13 +4819,16 @@ int main(void){
  80022d6:	2200      	movs	r2, #0
  80022d8:	701a      	strb	r2, [r3, #0]
 			}
+			//Se llama la función que muestra los números.
 			showNumber();
  80022da:	f000 f83f 	bl	800235c <showNumber>
 			break;
  80022de:	e032      	b.n	8002346 <main+0xe2>
-
+		// Se entra en el segundo modo de operación del snake game.
 		case 1:
-
+			/* Se define el sentido de rotación del encoder con los mismos criterios
+			 * del modo anterior.
+			 */
 			if(flagClock){
  80022e0:	4b1a      	ldr	r3, [pc, #104]	; (800234c <main+0xe8>)
  80022e2:	781b      	ldrb	r3, [r3, #0]
@@ -4865,7 +4870,11 @@ int main(void){
  8002318:	4603      	mov	r3, r0
  800231a:	2b00      	cmp	r3, #0
  800231c:	d10d      	bne.n	800233a <main+0xd6>
-					// Se restringe el intervalo de operación del contador entre 0 y 99.
+					 * que indica la secuencia en que deben irse encendiendo los segmentos
+					 * del modo culebrita.
+					 */
+
+					// Sentido de decrecimiento del nuevo contador counterS del modo 2.
 					if(counterS <= 0){
  800231e:	4b0e      	ldr	r3, [pc, #56]	; (8002358 <main+0xf4>)
  8002320:	781b      	ldrb	r3, [r3, #0]
@@ -5329,7 +5338,10 @@ void showDisplay(uint8_t numero){
 
 0800267c <showSegment>:
 
-// Se crea esta función para mostrar los segmentos en el display.
+/* Se crea esta función para mostrar los segmentos en el display, discriminando
+ * si se encuentra en el display de la izquierda o la derecha dependiendo de
+ * la distribución de los segmentos dentro de la secuencia escogida.
+ */
 void showSegment (void){
  800267c:	b580      	push	{r7, lr}
  800267e:	af00      	add	r7, sp, #0
@@ -5426,7 +5438,9 @@ void showSegment (void){
 
 08002728 <snakeGame>:
 
-
+/* Esta función determina la secuencia en que van a encenderse los segmentos
+ * de acuerdo con la rotación del encoder para la culebrita del segundo modo.
+ */
 void snakeGame (uint8_t posAngular){
  8002728:	b580      	push	{r7, lr}
  800272a:	b082      	sub	sp, #8
@@ -5918,7 +5932,7 @@ void init_Hardware(void){
  8002ab0:	2200      	movs	r2, #0
  8002ab2:	71da      	strb	r2, [r3, #7]
 
-	// Se carga lo que se hizo sobre el pin A5
+	// Se carga lo que se hizo sobre el pin A5 sobre el que está el blinkyPin
 	GPIO_Config(&handlerBlinkyPin);
  8002ab4:	4898      	ldr	r0, [pc, #608]	; (8002d18 <init_Hardware+0x28c>)
  8002ab6:	f7ff fa53 	bl	8001f60 <GPIO_Config>
@@ -5927,7 +5941,7 @@ void init_Hardware(void){
  8002abc:	4896      	ldr	r0, [pc, #600]	; (8002d18 <init_Hardware+0x28c>)
  8002abe:	f7ff fb77 	bl	80021b0 <GPIO_WritePin>
 
-	// Configuración general en que se va a manejar el timer.
+	// Configuración general en que se va a manejar el timer del blinky.
 	handlerTim2.ptrTIMx								= TIM2;
  8002ac2:	4b97      	ldr	r3, [pc, #604]	; (8002d20 <init_Hardware+0x294>)
  8002ac4:	f04f 4280 	mov.w	r2, #1073741824	; 0x40000000
@@ -5978,6 +5992,7 @@ void init_Hardware(void){
  8002b02:	4888      	ldr	r0, [pc, #544]	; (8002d24 <init_Hardware+0x298>)
  8002b04:	f7ff fa2c 	bl	8001f60 <GPIO_Config>
 
+	// Se configura la interrupcion
     handlerExtiCLK.edgeType								= EXTERNAL_INTERRUPT_FALLING_EDGE; //flancos de bajada
  8002b08:	4b88      	ldr	r3, [pc, #544]	; (8002d2c <init_Hardware+0x2a0>)
  8002b0a:	2200      	movs	r2, #0
@@ -6043,7 +6058,7 @@ void init_Hardware(void){
  8002b56:	4b77      	ldr	r3, [pc, #476]	; (8002d34 <init_Hardware+0x2a8>)
  8002b58:	2202      	movs	r2, #2
  8002b5a:	719a      	strb	r2, [r3, #6]
-
+	// Se carga lo hecho sobre el GPIO.
 	GPIO_Config(&handlerButtonSW);
  8002b5c:	4875      	ldr	r0, [pc, #468]	; (8002d34 <init_Hardware+0x2a8>)
  8002b5e:	f7ff f9ff 	bl	8001f60 <GPIO_Config>
@@ -6386,6 +6401,7 @@ void init_Hardware(void){
 
 08002d6c <BasicTimer2_Callback>:
 
+// Basic timer sobre el que está puesto el led de estado.
 void BasicTimer2_Callback(void){
  8002d6c:	b580      	push	{r7, lr}
  8002d6e:	af00      	add	r7, sp, #0
@@ -6400,6 +6416,7 @@ void BasicTimer2_Callback(void){
 
 08002d80 <BasicTimer5_Callback>:
 
+// Se definen los switcheos de los transistores dentro del timer para los display.
 void BasicTimer5_Callback(void){
  8002d80:	b580      	push	{r7, lr}
  8002d82:	af00      	add	r7, sp, #0
@@ -6417,6 +6434,7 @@ void BasicTimer5_Callback(void){
 
 08002d9c <callback_extInt11>:
 
+// Interrupción de la señal de reloj.
 void callback_extInt11(void){
  8002d9c:	b480      	push	{r7}
  8002d9e:	af00      	add	r7, sp, #0
@@ -6434,6 +6452,7 @@ void callback_extInt11(void){
 
 08002db4 <callback_extInt15>:
 
+// Interrupción para definir el modo.
 void callback_extInt15(void){
  8002db4:	b480      	push	{r7}
  8002db6:	af00      	add	r7, sp, #0

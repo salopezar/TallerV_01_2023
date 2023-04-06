@@ -1,4 +1,4 @@
-18:57:11 **** Incremental Build of configuration Debug for project tarea_3_Solucion ****
+21:23:20 **** Build of configuration Debug for project tarea_3_Solucion ****
 make clean all 
 rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
 rm -rf ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
@@ -24,5 +24,5 @@ arm-none-eabi-objdump -h -S  tarea_3_Solucion.elf  > "tarea_3_Solucion.list"
 Finished building: tarea_3_Solucion.list
  
 
-18:57:12 Build Finished. 0 errors, 0 warnings. (took 615ms)
+21:23:21 Build Finished. 0 errors, 0 warnings. (took 819ms)
 
