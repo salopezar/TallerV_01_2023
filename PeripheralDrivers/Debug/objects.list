@@ -1,0 +1,4 @@
+"./Src/BasicTimer.o"
+"./Src/ExtiDriver.o"
+"./Src/GPIOxDriver.o"
+"./Src/USARTxDriver.o"

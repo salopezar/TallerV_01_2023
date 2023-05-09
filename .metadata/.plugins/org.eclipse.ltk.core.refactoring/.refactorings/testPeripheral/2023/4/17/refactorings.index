@@ -1,0 +1,3 @@
+1682444995516	Move 'main.c' to 'Src'
+1682445085515	Move 'startup_stm32f411retx.s' to 'Startup'
+1682445124501	Move 2 resources to 'Core'
