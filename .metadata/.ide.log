@@ -2711,3 +2711,24 @@
 2023-05-08 20:14:47,004 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
 2023-05-08 20:14:47,005 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Defaulting to no-operation (NOP) logger implementation
 2023-05-08 20:14:47,006 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2023-05-09 12:58:48,040 [INFO] Activator:177 - 
+
+
+2023-05-09 12:58:48,041 [INFO] Activator:178 - !SESSION log4j initialized
+2023-05-09 12:59:14,032 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+2023-05-09 12:59:14,033 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Defaulting to no-operation (NOP) logger implementation
+2023-05-09 12:59:14,033 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2023-05-09 13:33:22,533 [INFO] Activator:177 - 
+
+
+2023-05-09 13:33:22,535 [INFO] Activator:178 - !SESSION log4j initialized
+2023-05-09 13:33:49,065 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+2023-05-09 13:33:49,066 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Defaulting to no-operation (NOP) logger implementation
+2023-05-09 13:33:49,066 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+2023-05-11 14:06:59,103 [INFO] Activator:177 - 
+
+
+2023-05-11 14:06:59,104 [INFO] Activator:178 - !SESSION log4j initialized
+2023-05-11 14:07:25,776 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+2023-05-11 14:07:25,777 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: Defaulting to no-operation (NOP) logger implementation
+2023-05-11 14:07:25,777 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.

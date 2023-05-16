@@ -58,6 +58,7 @@
 #include "BasicTimer.h"
 #include "GPIOxDriver.h"
 #include "ExtiDriver.h"
+#include "USARTxDriver.h"
 
 // Se define y se inicializa el LED de estado.
 GPIO_Handler_t handlerBlinkyPin = {0};

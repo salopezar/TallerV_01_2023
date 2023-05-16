@@ -1,4 +1,4 @@
-17:54:04 **** Build of configuration Debug for project peripheralSystick ****
+13:34:11 **** Incremental Build of configuration Debug for project peripheralSystick ****
 make clean all 
 rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
 rm -rf ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
@@ -13,21 +13,17 @@ arm-none-eabi-gcc "../Drivers/Src/BasicTimer.c" -mcpu=cortex-m4 -std=gnu11 -g3 -
 arm-none-eabi-gcc "../Drivers/Src/ExtiDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/peripheralSystick/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/ExtiDriver.d" -MT"Drivers/Src/ExtiDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/ExtiDriver.o"
 arm-none-eabi-gcc "../Drivers/Src/GPIOxDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/peripheralSystick/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/GPIOxDriver.d" -MT"Drivers/Src/GPIOxDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/GPIOxDriver.o"
 arm-none-eabi-gcc "../Drivers/Src/SysTickDriver.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I../Inc -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/mcu_headers/CMSIS/Device/ST/STM32F4xx/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/peripheralSystick/Drivers/Inc" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Drivers/Src/SysTickDriver.d" -MT"Drivers/Src/SysTickDriver.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Drivers/Src/SysTickDriver.o"
-../Drivers/Src/SysTickDriver.c: In function 'config_SysTick_ms':
-../Drivers/Src/SysTickDriver.c:25:47: error: expected expression before ';' token
-   25 |   SysTick->LOAD = SYSTICK_LOAD_VALUE_16MHz_1ms;
-      |                                               ^
-../Drivers/Src/SysTickDriver.c:30:47: error: expected expression before ';' token
-   30 |   SysTick->LOAD = SYSTICK_LOAD_VALUE_16MHz_1ms;
-      |                                               ^
-../Drivers/Src/SysTickDriver.c:35:48: error: expected expression before ';' token
-   35 |   SysTick->LOAD = SYSTICK_LOAD_VALUE_100MHz_1ms;
-      |                                                ^
-../Drivers/Src/SysTickDriver.c:40:47: error: expected expression before ';' token
-   40 |   SysTick->LOAD = SYSTICK_LOAD_VALUE_16MHz_1ms;
-      |                                               ^
-make: *** [Drivers/Src/subdir.mk:28: Drivers/Src/SysTickDriver.o] Error 1
-"make clean all" terminated with exit code 2. Build might be incomplete.
+arm-none-eabi-gcc -o "peripheralSystick.elf" @"objects.list"   -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/peripheralSystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="peripheralSystick.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: peripheralSystick.elf
+ 
+arm-none-eabi-size   peripheralSystick.elf 
+   text	   data	    bss	    dec	    hex	filename
+  32040	    476	   1816	  34332	   861c	peripheralSystick.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objdump -h -S  peripheralSystick.elf  > "peripheralSystick.list"
+Finished building: peripheralSystick.list
+ 
 
-17:54:04 Build Failed. 5 errors, 0 warnings. (took 827ms)
+13:34:12 Build Finished. 0 errors, 0 warnings. (took 1s.36ms)
 
