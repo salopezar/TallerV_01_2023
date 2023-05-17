@@ -1,4 +1,4 @@
-14:19:58 **** Incremental Build of configuration Debug for project testPeripheral ****
+14:58:16 **** Incremental Build of configuration Debug for project testPeripheral ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -18,5 +18,5 @@ arm-none-eabi-objdump -h -S  testPeripheral.elf  > "testPeripheral.list"
 Finished building: testPeripheral.list
  
 
-14:19:58 Build Finished. 0 errors, 0 warnings. (took 464ms)
+14:58:16 Build Finished. 0 errors, 0 warnings. (took 425ms)
 

@@ -1,4 +1,4 @@
-13:34:11 **** Incremental Build of configuration Debug for project peripheralSystick ****
+14:56:42 **** Build of configuration Debug for project peripheralSystick ****
 make clean all 
 rm -rf ./Startup/startup_stm32f411retx.d ./Startup/startup_stm32f411retx.o
 rm -rf ./Src/main.d ./Src/main.o ./Src/main.su ./Src/syscalls.d ./Src/syscalls.o ./Src/syscalls.su ./Src/sysmem.d ./Src/sysmem.o ./Src/sysmem.su
@@ -25,5 +25,5 @@ arm-none-eabi-objdump -h -S  peripheralSystick.elf  > "peripheralSystick.list"
 Finished building: peripheralSystick.list
  
 
-13:34:12 Build Finished. 0 errors, 0 warnings. (took 1s.36ms)
+14:56:42 Build Finished. 0 errors, 0 warnings. (took 771ms)
 

@@ -1,4 +1,7 @@
 "./Src/BasicTimer.o"
 "./Src/ExtiDriver.o"
 "./Src/GPIOxDriver.o"
+"./Src/I2CDriver.o"
+"./Src/PwmDriver.o"
+"./Src/SysTickDriver.o"
 "./Src/USARTxDriver.o"

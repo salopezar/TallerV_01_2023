@@ -8,18 +8,27 @@ C_SRCS += \
 ../Src/BasicTimer.c \
 ../Src/ExtiDriver.c \
 ../Src/GPIOxDriver.c \
+../Src/I2CDriver.c \
+../Src/PwmDriver.c \
+../Src/SysTickDriver.c \
 ../Src/USARTxDriver.c 
 
 OBJS += \
 ./Src/BasicTimer.o \
 ./Src/ExtiDriver.o \
 ./Src/GPIOxDriver.o \
+./Src/I2CDriver.o \
+./Src/PwmDriver.o \
+./Src/SysTickDriver.o \
 ./Src/USARTxDriver.o 
 
 C_DEPS += \
 ./Src/BasicTimer.d \
 ./Src/ExtiDriver.d \
 ./Src/GPIOxDriver.d \
+./Src/I2CDriver.d \
+./Src/PwmDriver.d \
+./Src/SysTickDriver.d \
 ./Src/USARTxDriver.d 
 
 
@@ -30,7 +39,7 @@ Src/%.o Src/%.su: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su
+	-$(RM) ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/I2CDriver.d ./Src/I2CDriver.o ./Src/I2CDriver.su ./Src/PwmDriver.d ./Src/PwmDriver.o ./Src/PwmDriver.su ./Src/SysTickDriver.d ./Src/SysTickDriver.o ./Src/SysTickDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su
 
 .PHONY: clean-Src
 
