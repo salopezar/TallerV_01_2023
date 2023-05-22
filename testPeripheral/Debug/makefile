@@ -60,7 +60,7 @@ main-build: testPeripheral.elf secondary-outputs
 
 # Tool invocations
 testPeripheral.elf testPeripheral.map: $(OBJS) $(USER_OBJS) /home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/STM32F411RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "testPeripheral.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="testPeripheral.map" -Wl,--gc-sections -static -L/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+	arm-none-eabi-gcc -o "testPeripheral.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="testPeripheral.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

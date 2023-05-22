@@ -1,0 +1,16 @@
+/*
+ * PLLDriver.h
+ *
+ *  Created on: 20/05/2023
+ *      Author: santiago
+ */
+
+#ifndef INC_PLLDRIVER_H_
+#define INC_PLLDRIVER_H_
+#include "stm32f4xx.h"
+
+/*prototipos de las funciones */
+void configPLL(void);
+
+
+#endif /* INC_PLLDRIVER_H_ */

@@ -1,0 +1,152 @@
+/**
+ ******************************************************************************
+ * @file           : main.c
+ * @author         : SANTIAGO LÓPEZ ARANZAZU - CC. 1007429871
+ * @e-mail         : salopezar@unal.edu.co
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include "ExtiDriver.h"
+#include "GPIOxDriver.h"
+#include "BasicTimer.h"
+#include "stm32f4xx.h"
+#include "USARTxDriver.h"
+
+
+
+/* Definicion de handlers */
+GPIO_Handler_t handlerLED2 = {0}; // led de estado
+GPIO_Handler_t handlerUserButton  = {0}; // boton del encoder rotativo
+
+GPIO_Handler_t handlerDigit2 = {0}; // digito derecho del display 7 segmentos
+GPIO_Handler_t handlerClock = {0}; // puerto clock del encoder
+GPIO_Handler_t handlerData = {0}; // puerto data del encoder
+
+// Elementos para hacer la comunicación serial
+
+GPIO_Handler_t handlerPinTx = {0};
+GPIO_Handler_t handlerPinRx = {0};
+USART_Handler_t usart2Comm = {0};
+uint8_t sendMsg = 0;
+
+
+
+// Elementos Timer (interrupciones periodicas
+BasicTimer_Handler_t handlerBlinkyTimer = {0};
+
+// Elementos EXTI (interrupciones externas)
+EXTI_Config_t handlerExtiButton = {0};
+EXTI_Config_t handlerExtiClock = {0};
+
+
+
+/* Definicion de cabeceras de funciones*/
+void init_Hardware(void); // para iniciar los elementos del sistema
+void callback_exti12(void); // se ejecuta cuando se genera una rotacion en el Encoder
+
+
+/*
+ * funcion principal del programa
+ * esta funcion es el corazon del programa
+ */
+int main(void){
+
+//Inicializacion de todos los elementos del sistema
+init_Hardware();
+
+//bucle infinito
+while(1){
+if(sendMsg > 4){
+writeChar(&usart2Comm, 'G');
+sendMsg = 0;
+}
+
+} // Fin while
+} // Fin main
+
+/* Función para inicializar los elementos del sistema */
+void init_Hardware(void){
+
+//Configuracion del LED de estado
+handlerLED2.pGPIOx = GPIOA;
+handlerLED2.GPIO_PinConfig.GPIO_PinNumber = PIN_5;
+handlerLED2.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_OUT;
+handlerLED2.GPIO_PinConfig.GPIO_PinOPType = GPIO_OTYPE_PUSHPULL;
+handlerLED2.GPIO_PinConfig.GPIO_PinSpeed   = GPIO_OSPEED_FAST;
+handlerLED2.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+
+//se carga la configuracion del LED
+GPIO_Config(&handlerLED2);
+// Se inicia con el LED encendido
+GPIO_WritePin(&handlerLED2, SET);
+
+// Configuracion del TIM2 para que haga un blinky cada 250 ms
+handlerBlinkyTimer.ptrTIMx = TIM2;
+handlerBlinkyTimer.TIMx_Config.TIMx_mode = BTIMER_MODE_UP; // modo ascendente del counter
+handlerBlinkyTimer.TIMx_Config.TIMx_speed = BTIMER_SPEED_1ms; //Incremento de 1 ms en el counter
+handlerBlinkyTimer.TIMx_Config.TIMx_period = 250; //Lanza una interrupcion cada 250 ms
+handlerBlinkyTimer.TIMx_Config.TIMx_interruptEnable = BTIMER_INTERRUP_ENABLE; // se activa la interrupcion
+
+// Cargando la configuracion del TIM2 en los registros
+BasicTimer_Config(&handlerBlinkyTimer);
+
+
+// Configuración del botón del encoder
+handlerUserButton.pGPIOx = GPIOB;
+handlerUserButton.GPIO_PinConfig.GPIO_PinNumber = PIN_3;
+handlerUserButton.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_IN;// modo entrada
+handlerUserButton.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_PULLUP; //nivel logico del boton en estado alto
+handlerUserButton.GPIO_PinConfig.GPIO_PinSpeed = GPIO_OSPEED_FAST;
+
+//Cargando la configuracion en los registros
+    handlerExtiButton.edgeType = EXTERNAL_INTERRUPT_FALLING_EDGE;// se eligen flancos de bajada
+    handlerExtiButton.pGPIOHandler = &handlerUserButton;
+    extInt_Config(&handlerExtiButton);
+
+   // Configuracion de la comunicacion serial
+
+    /*transmision*/
+    handlerPinTx.pGPIOx = GPIOA;
+    handlerPinTx.GPIO_PinConfig.GPIO_PinNumber = 2;
+    handlerPinTx.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
+    handlerPinTx.GPIO_PinConfig.GPIO_PinAltFunMode = AF7;
+    GPIO_Config(&handlerPinTx);
+
+    /*Recepción*/
+    handlerPinRx.pGPIOx = GPIOA;
+    handlerPinRx.GPIO_PinConfig.GPIO_PinNumber = 3;
+    handlerPinRx.GPIO_PinConfig.GPIO_PinMode = GPIO_MODE_ALTFN;
+    handlerPinRx.GPIO_PinConfig.GPIO_PinAltFunMode = AF7;
+    GPIO_Config(&handlerPinRx);
+
+    usart2Comm.ptrUSARTx  = USART2;
+    usart2Comm.USART_Config.USART_baudrate = USART_BAUDRATE_115200;
+    usart2Comm.USART_Config.USART_datasize = USART_DATASIZE_8BIT;
+    usart2Comm.USART_Config.USART_parity = USART_PARITY_NONE;
+    usart2Comm.USART_Config.USART_stopbits = USART_STOPBIT_1;
+    usart2Comm.USART_Config.USART_mode = USART_MODE_RXTX;
+    usart2Comm.USART_Config.USART_enableIntRX = USART_RX_INTERRUP_DISABLE;
+
+
+    USART_Config(&usart2Comm);
+
+}// Fin funcion init_Hardware
+
+// interrupcion Blinky para el led de estado
+void BasicTimer2_Callback(void){
+GPIO_TooglePin(&handlerLED2);
+sendMsg++;
+}

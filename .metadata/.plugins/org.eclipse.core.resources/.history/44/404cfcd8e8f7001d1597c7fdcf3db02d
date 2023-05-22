@@ -1,0 +1,56 @@
+/**
+ ******************************************************************************
+ * @file           : main.c
+ * @author         : SANTIAGO LÓPEZ ARANZAZU - CC. 1007429871
+ * @e-mail         : salopezar@unal.edu.co
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
+/***************************** TAREA ESPECIAL ********************************/
+/*
+ * Este programa busca unificar algunas ideas y conceptos trabajados en el
+ * curso de taller 5 anteriormente, a través de la integración de algunos drivers
+ * que muestran la introducción a algunos protocolos de comunicación como USART e
+ * I2C y la generación de señales PWM para el control de algunos dispositivos
+ * externos al microcontrolador mediante señales cuadradas con características de
+ * frecuencia y anchos de pulso determinados por lecturas de sensores externos o
+ * de acuerdo al criterio que se requiera.
+ *
+ * Además, se implementa un nuevo driver que permite variar la frecuencia natural
+ * de funcionamiento de 16 MHz del microcontrolador (PLL), que a su vez, obliga a
+ * cambiar algunas frecuencias de transmisión en los protocolos de comunicación con
+ */
+
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+
+#include <stm32f4xx.h>
+
+#include "BasicTimer.h"
+#include "GPIOxDriver.h"
+#include "ExtiDriver.h"
+#include "USARTxDriver.h"
+#include "SysTickDriver.h"
+#include "PwmDriver.h"
+
+
+int main(void){
+
+    while(1){
+
+    }
+
+}
+
+

@@ -133,7 +133,7 @@ void USART_Config(USART_Handler_t *ptrUsartHandler){
 
 	else if (ptrUsartHandler->USART_Config.USART_baudrate == USART_BAUDRATE_19200) {
 		// El valor a cargar es 52.0625 -> Mantiza = 52,fraction = 0.0625
-		// Mantiza = 52 = 0x34, fraction = 16 * 0.1875 = 1
+		// Mantiza = 52 = 0x34, fraction = 16 * 0.0625 = 1
 		// Escriba acá su código y los comentarios que faltan
 		// Valor a cargar 0x0341
 		ptrUsartHandler->ptrUSARTx->BRR = 0x0341;
@@ -151,20 +151,20 @@ void USART_Config(USART_Handler_t *ptrUsartHandler){
 	case USART_MODE_TX:
 	{
 		// Activamos la parte del sistema encargada de enviar
-		ptrUsartHandler->ptrUSARTx->CR1 |=USART_CR1_TE;
+		ptrUsartHandler->ptrUSARTx->CR1 |=	USART_CR1_TE;
 		break;
 	}
 	case USART_MODE_RX:
 	{
 		// Activamos la parte del sistema encargada de recibir
-		ptrUsartHandler->ptrUSARTx->CR1 |=USART_CR1_RE;
+		ptrUsartHandler->ptrUSARTx->CR1 |=	USART_CR1_RE;
 		break;
 	}
 	case USART_MODE_RXTX:
 	{
 		// Activamos ambas partes, tanto transmision como recepcion
-		ptrUsartHandler->ptrUSARTx->CR1 |=USART_CR1_TE;
-		ptrUsartHandler->ptrUSARTx->CR1 |=USART_CR1_RE;
+		ptrUsartHandler->ptrUSARTx->CR1 |=	USART_CR1_TE;
+		ptrUsartHandler->ptrUSARTx->CR1 |=	USART_CR1_RE;
 		break;
 	}
 	case USART_MODE_DISABLE:

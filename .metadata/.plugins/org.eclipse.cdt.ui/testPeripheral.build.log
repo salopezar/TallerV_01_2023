@@ -1,4 +1,4 @@
-14:58:16 **** Incremental Build of configuration Debug for project testPeripheral ****
+10:50:36 **** Incremental Build of configuration Debug for project testPeripheral ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -6,17 +6,17 @@ rm -rf default.size.stdout testPeripheral.elf testPeripheral.list testPeripheral
  
 arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
 arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "testPeripheral.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="testPeripheral.map" -Wl,--gc-sections -static -L/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+arm-none-eabi-gcc -o "testPeripheral.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/testPeripheral/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="testPeripheral.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
 Finished building target: testPeripheral.elf
  
 arm-none-eabi-size   testPeripheral.elf 
    text	   data	    bss	    dec	    hex	filename
-  31756	    476	   1804	  34036	   84f4	testPeripheral.elf
+  27340	    484	   1820	  29644	   73cc	testPeripheral.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  testPeripheral.elf  > "testPeripheral.list"
 Finished building: testPeripheral.list
  
 
-14:58:16 Build Finished. 0 errors, 0 warnings. (took 425ms)
+10:50:36 Build Finished. 0 errors, 0 warnings. (took 367ms)
 

@@ -1,0 +1,60 @@
+/*
+ * PLLDriver.c
+ *
+ *  Created on: 20/05/2023
+ *      Author: santiago
+ */
+
+#include "PLLDriver.h"
+
+void configPLL(void){
+	// Se apunta la entrada hacia el HSI como reloj interno del microcontrolador.
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLSRC);
+	// Se limpia el registro por seguridad.
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM);
+	/* De acuerdo con las ecuaciones del datasheet y la frecuencia que se desea,
+	 * ponemos un 8 en el PLL_M (Ver PLLCFGR y las tablas).
+	*/
+	RCC->PLLCFGR |= (RCC_PLLCFGR_PLLM_3);
+
+	// El PLL_N será 80, porque requerimos 80 MHz.
+	/* Se limpia el registro */
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLN);
+	// Se escribe el 80 que en binario es 2⁴ + 2⁶.
+	RCC->PLLCFGR |= (RCC_PLLCFGR_PLLN_4);
+	RCC->PLLCFGR |= (RCC_PLLCFGR_PLLN_6);
+
+	// El PLL_P es 2 por la sugerencia del datasheet.
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLP);
+
+	/* La latencia sugerida para el voltaje de esta frecuencia es 2 */
+	// Limpieza del registro.
+	FLASH->ACR &= ~(FLASH_ACR_LATENCY);
+	// Latencia de 2.
+	FLASH->ACR |= FLASH_ACR_LATENCY_2WS;
+
+	// Se selecciona la señal PLL.
+
+	RCC->CFGR |= (RCC_CFGR_MCO1_0);
+	RCC->CFGR |= (RCC_CFGR_MCO1_1);
+
+	// Se utiliza un preescaler de 4 para "dividir la señal" y hacerla visible.
+
+	RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_0);
+	RCC->CFGR |= (RCC_CFGR_MCO1PRE_1);
+	RCC->CFGR |= (RCC_CFGR_MCO1PRE_2);
+
+	// Se inicializa el PLL.
+	RCC->CR |= RCC_CR_PLLON;
+
+	// Se estabiliza el cierre del PLL haciendo un "retardo" en el bucle.
+	while(!(RCC->CR & RCC_CR_PLLRDY)){
+		__NOP();
+	}
+
+	// Se selecciona el PLL como fuente de reloj del sistem.
+	RCC->CFGR &= ~(RCC_CFGR_SW);
+	RCC->CFGR |= (RCC_CFGR_SW_1);
+
+}
+

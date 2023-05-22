@@ -1,0 +1,153 @@
+/**
+ ******************************************************************************
+ * @file           : main.c
+ * @author         : SANTIAGO LÓPEZ ARANZAZU - CC. 1007429871
+ * @e-mail         : salopezar@unal.edu.co
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
+/***************************** TAREA ESPECIAL ********************************/
+/*
+ * Este programa busca unificar algunas ideas y conceptos trabajados en el
+ * curso de taller 5 anteriormente, a través de la integración de algunos drivers
+ * que muestran la introducción a algunos protocolos de comunicación como USART e
+ * I2C y la generación de señales PWM para el control de algunos dispositivos
+ * externos al microcontrolador mediante señales cuadradas con características de
+ * frecuencia y anchos de pulso determinados por lecturas de sensores externos o
+ * de acuerdo al criterio que se requiera.
+ *
+ * Además, se implementa un nuevo driver que permite variar la frecuencia natural
+ * de funcionamiento de 16 MHz del microcontrolador (PLL), que a su vez, obliga a
+ * cambiar algunas frecuencias de transmisión en los protocolos de comunicación con
+ */
+
+
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Perifericos
+#include "stm32f4xx.h"
+#include "GPIOxDriver.h"
+#include "USARTxDriver.h"
+#include "BasicTimer.h"
+#include "AdcDriver.h"
+#include "ExtiDriver.h"
+#include "I2CDriver.h"
+#include "PwmDriver.h"
+#include "LCDDriver.h"
+#include "RTCDriver.h"
+#include "PLLDriver.h"
+
+// Se crea el handler para el PLL que aumentara la frecuencia del reloj del micro
+PLL_Handler_t handlerPLL = {0};
+
+// Definicion de los handlers necesarios para transmision, recepción y blinky
+GPIO_Handler_t handlerBlinkyPin 	= {0};
+GPIO_Handler_t handlerTxPin 		= {0};
+GPIO_Handler_t handlerRxPin 		= {0};
+
+// Timer encargado del blinky
+BasicTimer_Handler_t handlerBlinkyTimer = {0};
+
+// Comunicacion RS-232 con el PC, ya habilitada en la board Nucleo
+// Utiliza la conexion USB
+USART_Handler_t handlerUSART2 = {0};
+uint8_t rxData = 0;
+
+// Mensaje que se envía al presionar la tecla "m" a través de la comunicación serial
+char greetingMsg[] = "Taller V Rocks!\n";
+
+void initSystem(void);
+void usart2Rx_Callback(void);
+
+int main(void)
+{
+	// Inicializamos todos los elementos del sistema
+	initSystem();
+
+	writeChar(&handlerUSART2, ' ');
+
+    /* Loop forever */
+	while(1){
+
+		/*
+		 * VERIFICACION TAREA 5
+		 * Envio de datos a través de la comunicación serial, al prisionar la tecla "m" se envía
+		 * el texto "Taller V Rocks!\n"
+		 */
+
+		if (rxData != '\0'){
+			// Imprimimos el caracter recibido
+			if (rxData == 'm'){
+				// Presentamos el mensaje
+				writeMsg(&handlerUSART2, greetingMsg);
+			}
+			rxData = '\0';
+		}
+	}
+	return 0;
+}
+
+void initSystem(void){
+
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	/*
+	 * PUNTO 1
+	 * Se configura el PLL desde un driver que recide en la carpeta de PeripheralDrivers,
+	 * para una información mas detallada acerca de la composición del driver, por favor dirigirse
+	 * a él. Para la configuración del PLL se deja al usuario que pueda escoger el prescaler
+	 * del APB1 (siendo el minimo prescaler 2) y del APB2, teniendo como frecuencia del reloj la
+	 * maxima proporcionada por el microcontrolador, es decir, 100 MHz.
+	 */
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	// Configuracion PLL
+	handlerPLL.PLL_Config.APB1_prescaler 	= APB1_PRESCALER_2;
+	handlerPLL.PLL_Config.APB2_prescaler	= APB2_PRESCALER_0;
+	handlerPLL.PLL_Config.PLL_voltage		= VOLTAGE_100MHZ;
+	PLL_Config(&handlerPLL);
+
+	// Configuración del Pin del LED_Blinky
+	handlerBlinkyPin.pGPIOx 							= GPIOA;
+	handlerBlinkyPin.GPIO_PinConfig.GPIO_PinMode 		= GPIO_MODE_OUT;
+	handlerBlinkyPin.GPIO_PinConfig.GPIO_PinNumber 		= PIN_5;
+	handlerBlinkyPin.GPIO_PinConfig.GPIO_PinOPType 		= GPIO_OTYPE_PUSHPULL;
+	handlerBlinkyPin.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	handlerBlinkyPin.GPIO_PinConfig.GPIO_PinSpeed 		= GPIO_OSPEED_FAST;
+	GPIO_Config(&handlerBlinkyPin);
+	//GPIO_WritePin(&handlerBlinkyPin, SET);
+
+
+
+
+	// Configurando el TIM2 para que funcione con el Blinky
+	handlerBlinkyTimer.ptrTIMx 							= TIM2;
+	handlerBlinkyTimer.TIMx_Config.TIMx_mode 			= BTIMER_MODE_UP;
+	handlerBlinkyTimer.TIMx_Config.TIMx_speed 			= BTIMER_SPEED_100MHz;
+	handlerBlinkyTimer.TIMx_Config.TIMx_period 			= 25000;
+	BasicTimer_Config(&handlerBlinkyTimer);
+
+
+}
+
+
+
+// Callback del TIM, hacemos el blinky
+void BasicTimer2_Callback(void){
+	GPIOxTooglePin(&handlerBlinkyPin);
+}

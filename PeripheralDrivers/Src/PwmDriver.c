@@ -1,9 +1,10 @@
 /*
  * PwmDriver.c
  *
- *  Created on: 8/05/2023
+ *  Created on: 19/05/2023
  *      Author: santiago
  */
+
 #include "PwmDriver.h"
 
 /**/
@@ -270,5 +271,4 @@ void updateDuttyCycle(PWM_Handler_t *ptrPwmHandler, uint16_t newDutty){
 	// Llamamos a la función que cambia el dutty y cargamos el nuevo valor
 	setDuttyCycle(ptrPwmHandler);
 }
-
 
