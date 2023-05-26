@@ -8,6 +8,9 @@
 #include <stm32f4xx.h>
 #include "PLLDriver.h"
 
+uint32_t HSI_VALUE = 16000000;
+
+
 void PLL_Config(PLL_Handler_t *ptrPLLHandler){
 
 	// Se selecciona HSI como reloj interno del PLL en vez de un oscilador.
@@ -81,29 +84,11 @@ void PLL_Config(PLL_Handler_t *ptrPLLHandler){
 	 * se decide no incluir el primer preescaler que divide en 1 la frecuencia que se
 	 * quiere implementar, sino comenzar con la división en 2,4,8,16...
 	 */
-	if(ptrPLLHandler->PLL_Config.APB1_prescaler == APB1_PRESCALER_2){
-		// Aquí se tendrían 40 MHz
-		RCC->CFGR |= 100<<10;
-	}
-	else if(ptrPLLHandler->PLL_Config.APB1_prescaler == APB1_PRESCALER_4){
-		// Aquí se tendrían 20 MHz
-		RCC->CFGR |= 101<<10;
-	}
-	else if(ptrPLLHandler->PLL_Config.APB1_prescaler == APB1_PRESCALER_8){
-		// Aquí se tendrían 10 MHz
-		RCC->CFGR |= 110<<10;
-	}
-	else if(ptrPLLHandler->PLL_Config.APB1_prescaler == APB1_PRESCALER_16){
-		// Aquí se tendrían 5 MHz
-		RCC->CFGR |= 111<<10;
-	}
-	else{
-		// Por defecto, se tienen 40 MHz.
-		RCC->CFGR |= 100<<10;
-	}
+	// Se divide en 2 el bus 1.
+	RCC->CFGR |= (RCC_CFGR_PPRE1_DIV2);
 
 	/*
- * IMPORTANTÍSIMO:
+	 * IMPORTANTÍSIMO:
 	 * Debe tenerse como premisa inicial que la máxima frecuencia a la que el
 	 * fabricante recomienda utilizar el APB2 es de 100 MHz, por tanto, como se
 	 * espera inicialmente en el objetivo de la tarea operar el microcontrolador
@@ -111,39 +96,17 @@ void PLL_Config(PLL_Handler_t *ptrPLLHandler){
 	 * frecuencia máxima del bus de datos, por tanto, el preescaler 0 que mantiene
 	 * la frecuencia original, puede implementarse, dividiendo en 1.
 	 */
-	if(ptrPLLHandler->PLL_Config.APB2_prescaler == APB2_PRESCALER_0){
-		// Aquí se tendrían 80 MHz
-		RCC->CFGR |= 001<<13;
-	}
-	if(ptrPLLHandler->PLL_Config.APB2_prescaler == APB2_PRESCALER_2){
-		//Aquí se tendrían 40 MHz
-		RCC->CFGR |= 100<<13;
-	}
-	else if(ptrPLLHandler->PLL_Config.APB2_prescaler == APB2_PRESCALER_4){
-		// Aquí se tendrían 20 MHz
-		RCC->CFGR |= 101<<13;
-	}
-	else if(ptrPLLHandler->PLL_Config.APB2_prescaler == APB2_PRESCALER_8){
-		// Aquí se tendrían 10 MHz
-		RCC->CFGR |= 110<<13;
-	}
-	else if(ptrPLLHandler->PLL_Config.APB2_prescaler == APB2_PRESCALER_16){
-		// Aquí se tendrían 5 MHz
-		RCC->CFGR |= 111<<13;
-	}
-	else{
-		// Por defecto, 40 MHz.
-		RCC->CFGR |= 100<<10;
-	}
-
+	// Se divide en 1 el bus 2.
+	RCC->CFGR |= (RCC_CFGR_PPRE2_DIV1);
 
 // Se debe configurar el sistema de manera que cuando la entrada del HSI
 // sean 80 MHz, se mantenga.
 	// La fuente de reloj del micro se configura sobre el HSI,
 	RCC->PLLCFGR |= (0 << 22);
 
-	// Se divide la entrada de frecuencia en 8, obteniendo 2 MHz en el PLLM.
-	RCC->PLLCFGR |= (001000 << 0);
+	// Se divide la entrada de frecuencia en 8, para obtener 2 MHz.
+	RCC->PLLCFGR &= ~(RCC_PLLCFGR_PLLM_4);
+	RCC->PLLCFGR |= (RCC_PLLCFGR_PLLM_3);
 
 	// Se aplica una máscara un poco rudimentaria para garantizar la limpieza del
 	// del registro.
@@ -185,3 +148,17 @@ void PLL_Config(PLL_Handler_t *ptrPLLHandler){
 	while (!(RCC->CFGR & (2<<2)));
 
 }// FIN DE LA FUNCIÓN DE CONFIGURACIÓN PARA DISTINTAS FRECUENCIAS.
+
+// Función para saber el estado del PLL y así poder caracterizar lo demás.
+uint32_t getConfigPLL(void){
+	// Se buscan los valores que están definiendo los valores actuales del reloj PLL
+	uint32_t PLLN = (RCC->PLLCFGR & RCC_PLLCFGR_PLLN_Msk) >> RCC_PLLCFGR_PLLN_Pos;
+	uint32_t PLLM = (RCC->PLLCFGR & RCC_PLLCFGR_PLLM_Msk) >> RCC_PLLCFGR_PLLM_Pos;
+	// Se hace la operación para saber el valor actual del reloj. (Asume PLLP =2)
+	uint32_t clockMicro = (HSI_VALUE / PLLM) * PLLN / 2;
+	return clockMicro;
+
+}
+
+
+
