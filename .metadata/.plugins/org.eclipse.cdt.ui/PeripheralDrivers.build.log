@@ -1,4 +1,4 @@
-01:55:21 **** Incremental Build of configuration Debug for project PeripheralDrivers ****
+22:26:05 **** Incremental Build of configuration Debug for project PeripheralDrivers ****
 make clean all 
 rm -rf ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/I2CDriver.d ./Src/I2CDriver.o ./Src/I2CDriver.su ./Src/PLLDriver.d ./Src/PLLDriver.o ./Src/PLLDriver.su ./Src/PwmDriver.d ./Src/PwmDriver.o ./Src/PwmDriver.su ./Src/SysTickDriver.d ./Src/SysTickDriver.o ./Src/SysTickDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su
 rm -rf libPeripheralDrivers.a
@@ -16,5 +16,5 @@ arm-none-eabi-ar: creating libPeripheralDrivers.a
 Finished building target: libPeripheralDrivers.a
  
 
-01:55:22 Build Finished. 0 errors, 0 warnings. (took 728ms)
+22:26:06 Build Finished. 0 errors, 0 warnings. (took 765ms)
 

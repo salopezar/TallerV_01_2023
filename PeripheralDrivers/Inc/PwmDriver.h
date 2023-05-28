@@ -16,7 +16,11 @@
 #define PWM_CHANNEL_4	3
 
 #define PWM_DUTTY_0_PERCENT		0
+#define PWM_DUTTY_50_PERCENT	50
 #define PWM_DUTTY_100_PERCENT	100
+
+#define PWM_PSC_80_MHZ	8000
+#define PWM_PSC_16_MHZ	1600
 
 /**/
 typedef struct
