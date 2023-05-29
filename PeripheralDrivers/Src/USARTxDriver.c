@@ -326,3 +326,4 @@ void USART6_IRQHandler(void){
 		usart6Rx_Callback();
 	}
 }
+

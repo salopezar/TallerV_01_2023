@@ -67,7 +67,8 @@ USART_Handler_t USART6Comm = {0};
 uint8_t sendMSG = 0;
 uint8_t newChar = 0;
 char mensaje[64] = "TALLERV_TAREA_ESPECIAL\n";
-
+uint8_t flag = 0;
+uint8_t flag2 = 0;
 /* Configración general para el acelerómetro ADXL-345 */
 GPIO_Handler_t SDA = {0};
 GPIO_Handler_t SCL = {0};
@@ -88,7 +89,11 @@ char bufferData[64] = "Accel ADXL-345 testing...";
 
 #define POWER_CTL              45
 #define WHO_AM_I               0
-
+// Arreglos para mostrar los datos del acelerómetro
+float X_1[2000] = {0};
+float Y_1[2000] = {0};
+float Z_1[2000] = {0};
+uint16_t counter = {0};
 
 // Timer del led de estado.
 BasicTimer_Handler_t handlerBlinkyTimer = {0};
@@ -135,172 +140,234 @@ int main(void){
 		if(rxData != '\0'){
 			//writeChar(&USART6Comm, rxData);
 			// Lectura sobre el WHO_AM_I del acelerómetro.
-			if(rxData == 'w'){
-				sprintf(bufferData, "WHO_AM_I? (r)\n");
-				writeMsg(&USART6Comm, bufferData);
-				// Configuración del I2C e impresión del mensaje,
-				i2cBuffer = i2c_readSingleRegister(&Acelerometer, WHO_AM_I);
-				sprintf(bufferData, "dataRead = 0x%x \n", (unsigned int) i2cBuffer);
-				writeMsg(&USART6Comm, bufferData);
-				rxData = '\0';
+			if(flagMuestreo == 1){
+				if(rxData == 'w'){
+					sprintf(bufferData, "WHO_AM_I? (r)\n");
+					writeMsg(&USART6Comm, bufferData);
+					// Configuración del I2C e impresión del mensaje,
+					i2cBuffer = i2c_readSingleRegister(&Acelerometer, WHO_AM_I);
+					sprintf(bufferData, "dataRead = 0x%x \n", (unsigned int) i2cBuffer);
+					writeMsg(&USART6Comm, bufferData);
+					rxData = '\0';
+				}
+				// Estado del acelerómetro
+				else if (rxData == 'p'){
+					sprintf(bufferData, "PWR_MGMT_1 state (r)\n");
+					writeMsg(&USART6Comm, bufferData);
+					i2cBuffer = i2c_readSingleRegister(&Acelerometer, POWER_CTL);
+					sprintf(bufferData, "dataRead = 0x%x \n", (unsigned int) i2cBuffer);
+					writeMsg(&USART6Comm, bufferData);
+					rxData = '\0';
+				}
+				// Reset para el acelerómetro.
+				else if (rxData == 'r'){
+					sprintf(bufferData, "PWR_MGMT_1 reset (w)\n");
+					writeMsg(&USART6Comm, bufferData);
+					// Configuración del reset dentro del I2C.
+					i2c_writeSingleRegister(&Acelerometer, POWER_CTL , 0x2D);
+					rxData = '\0';
+				}
+				// Para el eje X y su lectura presionando la tecla "x".
+				else if (rxData == 'x'){
+					sprintf(bufferData, "Axis X data (r) \n");
+					writeMsg(&USART6Comm, bufferData);
+					uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
+					uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
+					int16_t AccelX = AccelX_high << 8 | AccelX_low;
+					X_axis = AccelX * 0.0039 * 9.8;
+					sprintf(bufferData, "AccelX = %.2f \n", X_axis);
+					writeMsg(&USART6Comm, bufferData);
+					rxData = '\0';
+				}
+				// Para el eje Y y su lectura presionando la tecla "y".
+				else if(rxData == 'y'){
+					sprintf(bufferData, "Axis Y data (r)\n");
+					writeMsg(&USART6Comm, bufferData);
+					uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
+					uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
+					int16_t AccelY = AccelY_high << 8 | AccelY_low;
+					Y_axis = AccelY * 0.0039 * 9.8;
+					sprintf(bufferData, "AccelY = %.2f \n", Y_axis);
+					writeMsg(&USART6Comm, bufferData);
+					rxData = '\0';
+				}
+				// Para el eje Z y su lectura presionando la tecla "z".
+				else if(rxData == 'z'){
+					sprintf(bufferData, "Axis Z data (r)\n");
+					writeMsg(&USART6Comm, bufferData);
+					uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
+					uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
+					int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
+					Z_axis = AccelZ * 0.0039 * 9.8;
+					sprintf(bufferData, "AccelZ = %.2f \n", Z_axis);
+					writeMsg(&USART6Comm, bufferData);
+					rxData = '\0';
+				}
 			}
-			// Estado del acelerómetro
-			else if (rxData == 'p'){
-				sprintf(bufferData, "PWR_MGMT_1 state (r)\n");
-				writeMsg(&USART6Comm, bufferData);
-				i2cBuffer = i2c_readSingleRegister(&Acelerometer, POWER_CTL);
-				sprintf(bufferData, "dataRead = 0x%x \n", (unsigned int) i2cBuffer);
-				writeMsg(&USART6Comm, bufferData);
-				rxData = '\0';
-			}
-			// Reset para el acelerómetro.
-			else if (rxData == 'r'){
-				sprintf(bufferData, "PWR_MGMT_1 reset (w)\n");
-				writeMsg(&USART6Comm, bufferData);
-				// Configuración del reset dentro del I2C.
-				i2c_writeSingleRegister(&Acelerometer, POWER_CTL , 0x2D);
-				rxData = '\0';
-			}
-			// Para el eje X y su lectura presionando la tecla "x".
-			else if (rxData == 'x'){
-				sprintf(bufferData, "Axis X data (r) \n");
-				writeMsg(&USART6Comm, bufferData);
+			// Aquí se define el envío constante de datos.
+			/* Se define sobre la macro del timer 5 un muestreo infinito a
+			 * 1 kHz de los valores del acelerómetro ADXL-345 puesto sobre los
+			 * 3 ejes coordenados. Si se quiere entrar en este modo, debe presionarse
+			 * la tecla "c" desde la terminal serial. Se realiza la conversión
+			 * establecida dentro del datasheet del ADXL-345 para que los valores
+			 * estén dados en unidades del sistema internacional para aceleración.
+			 * El condicional se define en función del segundo valor que
+			 * puede tomar la bandera que se define en el Basic Callback.
+			 * El sistema entra aquí al presionar la letra "c".
+			 * Aquí se tiene un primer muestreo infinito a 1 kHz.
+			 */
+			if(flagMuestreo == 2){
+				// Para el eje X
 				uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
 				uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
 				int16_t AccelX = AccelX_high << 8 | AccelX_low;
 				X_axis = AccelX * 0.0039 * 9.8;
-				sprintf(bufferData, "AccelX = %.2f \n", X_axis);
-				writeMsg(&USART6Comm, bufferData);
-				rxData = '\0';
-			}
-			// Para el eje Y y su lectura presionando la tecla "y".
-			else if(rxData == 'y'){
-				sprintf(bufferData, "Axis Y data (r)\n");
-				writeMsg(&USART6Comm, bufferData);
+				X_1[counter] = X_axis; // Arreglo definido para X.
+				// Para el eje Y
 				uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
 				uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
 				int16_t AccelY = AccelY_high << 8 | AccelY_low;
 				Y_axis = AccelY * 0.0039 * 9.8;
-				sprintf(bufferData, "AccelY = %.2f \n", Y_axis);
-				writeMsg(&USART6Comm, bufferData);
-				rxData = '\0';
-			}
-			// // Para el eje Z y su lectura presionando la tecla "z".
-			else if(rxData == 'z'){
-				sprintf(bufferData, "Axis Z data (r)\n");
-				writeMsg(&USART6Comm, bufferData);
+				Y_1[counter] = Y_axis; // Arreglo definido para Y.
+				// Para el eje Z
 				uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
 				uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
 				int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
 				Z_axis = AccelZ * 0.0039 * 9.8;
-				sprintf(bufferData, "AccelZ = %.2f \n", Z_axis);
-				writeMsg(&USART6Comm, bufferData);
-				rxData = '\0';
+				Z_1[counter] = Z_axis; // Arreglo definido para Y.
+				// El contador que barre los arreglos.
+				counter++;
+				// Las 2000 tomas para los 2000 segundos.
+				if(counter == 2000){
+					flag = 1; // Bandera para entrar al ciclo if y enviar valores de aceleración
+					counter = 0;
+				}
 			}
-			/*else{
-				rxData = '\0';
-			}*/
-		}
 
-		// Muestreo infinito a 1 kHz.
-		/*
-		 * Se define sobre la macro del timer 5 un muestreo infinito a
-		 * 1 kHz de los valores del acelerómetro ADXL-345 puesto sobre los
-		 * 3 ejes coordenados. Si se quiere entrar en este modo, debe presionarse
-		 * la tecla "s" desde la terminal serial. Se realiza la conversión
-		 * establecida dentro del datasheet del ADXL-345 para que los valores
-		 * estén dados en unidades del sistema internacional para aceleración.
-		 */
-		// La bandera flagMuestreo está definida dentro del timer 5.
-		if (flagMuestreo == 1 && rxData == 's'){
-			// Para X.
-			sprintf(bufferData, "Axis X data (r) \n");
-			writeMsg(&USART6Comm, bufferData);
-			uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
-			uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
-			int16_t AccelX = AccelX_high << 8 | AccelX_low;
-			X_axis = AccelX * 0.0039 * 9.8;
-			sprintf(bufferData, "AccelX = %.2f \n", X_axis);
-			writeMsg(&USART6Comm, bufferData);
-			// Para Y.
-			sprintf(bufferData, "Axis Y data (r)\n");
-			writeMsg(&USART6Comm, bufferData);
-			uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
-			uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
-			int16_t AccelY = AccelY_high << 8 | AccelY_low;
-			Y_axis = AccelY * 0.0039 * 9.8;
-			sprintf(bufferData, "AccelY = %.2f \n", Y_axis);
-			writeMsg(&USART6Comm, bufferData);
-			// Para Z.
-			sprintf(bufferData, "Axis Z data (r)\n");
-			writeMsg(&USART6Comm, bufferData);
-			uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
-			uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
-			int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
-			Z_axis = AccelZ * 0.0039 * 9.8;
-			sprintf(bufferData, "AccelZ = %.2f \n", Z_axis);
-			writeMsg(&USART6Comm, bufferData);
-			// Se baja la bandera.
-			flagMuestreo = 0;
-		}
+			/* IMPRESIÓN DE LOS ARREGLOS :
+			 * Aquí se define la forma en que se busca dar un formato definido para
+			 * la presentación de los arreglos bajo el muestreo de 1 kHz.
+			 */
+				if(flag == 1){
+					for( int i = 0 ; i < 2000; i++){
+						sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
+						writeMsg(&USART6Comm, bufferData);
+						flagMuestreo = 0;
+				    }
+				}
 
-		/* Si se presiona la letra "K", el sistema envía datos sobre
-		 * los 3 ejes de aceleración por medio del USART. Se define sobre
-		 * la variación de cada uno de los ejes una señal PWM diferente que se
-		 * activa básicamente luego de escribir sobre el I2C.
-		 */
-		if (rxData == 'k'){
-			// Para X.
-			sprintf(bufferData, "Axis X data (r) \n");
-			writeMsg(&USART6Comm, bufferData);
-			uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
-			uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
-			int16_t AccelX = AccelX_high << 8 | AccelX_low;
-			X_axis = AccelX * 0.0039 * 9.8;
-			sprintf(bufferData, "AccelX = %.2f \n", X_axis);
-			writeMsg(&USART6Comm, bufferData);
-			updateDuttyCycle(&handlerTIM3PWM_1,duttyCalculator(X_axis));
-			// Para Y.
-			sprintf(bufferData, "Axis Y data (r)\n");
-			writeMsg(&USART6Comm, bufferData);
-			uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
-			uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
-			int16_t AccelY = AccelY_high << 8 | AccelY_low;
-			Y_axis = AccelY * 0.0039 * 9.8;
-			sprintf(bufferData, "AccelY = %.2f \n", Y_axis);
-			writeMsg(&USART6Comm, bufferData);
-			updateDuttyCycle(&handlerTIM3PWM_2,duttyCalculator(Y_axis));
-			// Para Z.
-			sprintf(bufferData, "Axis Z data (r)\n");
-			writeMsg(&USART6Comm, bufferData);
-			uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
-			uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
-			int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
-			Z_axis = AccelZ * 0.0039 * 9.8;
-			sprintf(bufferData, "AccelZ = %.2f \n", Z_axis);
-			writeMsg(&USART6Comm, bufferData);
-			updateDuttyCycle(&handlerTIM3PWM_3,duttyCalculator(Z_axis));
+				/* Al presionar la letra k como se define al final del código
+				 * dentro del Callback del timer, el sistema retorna los 6000
+				 * datos que corresponden al muestreo de 1 kHz durante 2 segundos
+				 * como se indica en el enunciado de la tarea. Se incluye dentro
+				 * del formato de retorno de los datos un segundo contador que
+				 * mostrará que sí se están retornando los 2000 datos (definiendo
+				 * un dato como el grupo de valores de las 3 coordenadas) y no
+				 * menos.
+				 */
+				if(flagMuestreo == 3){
 
-		}
+					uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
+					uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
+					int16_t AccelX = AccelX_high << 8 | AccelX_low;
+					X_axis = AccelX * 0.0039 * 9.8;
+					X_1[counter]=X_axis;
 
-	}
-	return 0;
-}
+					uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
+					uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
+					int16_t AccelY = AccelY_high << 8 | AccelY_low;
+					Y_axis = AccelY * 0.0039 * 9.8;
+					Y_1[counter]=Y_axis;
+
+					uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
+					uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
+					int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
+					Z_axis = AccelZ * 0.0039 * 9.8;
+					Z_1[counter]=Z_axis;
+					counter++;
+					if(counter == 2000){
+						flag2 = 1;
+						rxData = '\0';
+					}
+				}
+				/* Dentro de este if y gracias a la configuración de la velocidad
+				 * a la cual se pone a trabajar el timer, se imprimen los datos
+				 * recopilados dentro del arreglo para su fácil lectura y análisis.
+				 */
+
+				if(flag2 == 1){
+					for( int i = 0 ; i < 2000; i++){
+						sprintf(bufferData, "[m/s²] #%d AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",i,X_1[i],Y_1[i],Z_1[i]);
+						writeMsg(&USART6Comm, bufferData);
+						flagMuestreo =0;
+						flag2 = 0;
+					}
+
+				}
+
+				/* Si se presiona la letra "v", el sistema envía datos sobre
+				 * los 3 ejes de aceleración por medio del USART. Se define sobre
+				 * la variación de cada uno de los ejes una señal PWM diferente que se
+				 * activa básicamente luego de escribir sobre el I2C.
+				 */
+				if(flagMuestreo == 4){
+					// Para X.
+					sprintf(bufferData, "Axis X data (r) \n");
+					writeMsg(&USART6Comm, bufferData);
+					uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
+					uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
+					int16_t AccelX = AccelX_high << 8 | AccelX_low;
+					X_axis = AccelX * 0.0039 * 9.8;
+					sprintf(bufferData, "AccelX = %.2f \n", X_axis);
+					writeMsg(&USART6Comm, bufferData);
+					updateDuttyCycle(&handlerTIM3PWM_1,duttyCalculator(X_axis) * (200));
+					// Para Y.
+					sprintf(bufferData, "Axis Y data (r)\n");
+					writeMsg(&USART6Comm, bufferData);
+					uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
+					uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
+					int16_t AccelY = AccelY_high << 8 | AccelY_low;
+					Y_axis = AccelY * 0.0039 * 9.8;
+					sprintf(bufferData, "AccelY = %.2f \n", Y_axis);
+					writeMsg(&USART6Comm, bufferData);
+					updateDuttyCycle(&handlerTIM3PWM_2,duttyCalculator(Y_axis) * (200));
+					// Para Z.
+					sprintf(bufferData, "Axis Z data (r)\n");
+					writeMsg(&USART6Comm, bufferData);
+					uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
+					uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
+					int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
+					Z_axis = AccelZ * 0.0039 * 9.8;
+					sprintf(bufferData, "AccelZ = %.2f \n", Z_axis);
+					writeMsg(&USART6Comm, bufferData);
+					updateDuttyCycle(&handlerTIM3PWM_3,duttyCalculator(Z_axis) * (200));
+				}
+
+	} // FIN DEL CONDICIONAL RXData !=0
+  }// FIN DEL CICLO WHILE DEL MAIN.
+	return (0);
+}// FIN DEL MAIN
+
 // Función para calcular el dutty cycle a partir de la definición de error.
 /* Se toma un rango ideal para el acelerómetro tomando en cuenta las condiciones
- * en que se vió desde la ecperiencia que oscilan los valores.
+ * en que se vió desde la experiencia que oscilan los valores.
  */
 
 uint16_t duttyCalculator(float valor){
-	uint16_t dutty = (10 - valor) / 10;
-	if (dutty > 1){
-		uint16_t dutty_percent = dutty - 1;
+	uint16_t dutty = ((40 - valor) / 40) * 100;
+	if (dutty > 100){
+		uint16_t dutty_percent = dutty - 100;
+		return dutty_percent;
+	}else if(dutty < 100){
+		uint16_t dutty_percent = dutty;
 		return dutty_percent;
 	}else{
-		uint16_t dutty_percent = dutty;
+		uint16_t dutty_percent = 50;
 		return dutty_percent;
 	}
 }
+
+
 
 //Función de configuración de los elementos del sistema.
 void init_Hardware(void){
@@ -412,7 +479,7 @@ void init_Hardware(void){
 	handlerTIM3PWM_1.config.channel       =   PWM_CHANNEL_2;
 	handlerTIM3PWM_1.config.duttyCicle    =   PWM_DUTTY_50_PERCENT;
 	handlerTIM3PWM_1.config.periodo       =   20000;
-	handlerTIM3PWM_1.config.prescaler     =   16;
+	handlerTIM3PWM_1.config.prescaler     =   PWM_PSC_80_MHZ;
 
 	pwm_Config(&handlerTIM3PWM_1);
 
@@ -433,7 +500,7 @@ void init_Hardware(void){
 	handlerTIM3PWM_2.config.channel       =   PWM_CHANNEL_3;
 	handlerTIM3PWM_2.config.duttyCicle    =   PWM_DUTTY_50_PERCENT;
 	handlerTIM3PWM_2.config.periodo       =   20000;
-	handlerTIM3PWM_2.config.prescaler     =   16;
+	handlerTIM3PWM_2.config.prescaler     =   PWM_PSC_80_MHZ;
 
 	pwm_Config(&handlerTIM3PWM_2);
 
@@ -463,7 +530,6 @@ void init_Hardware(void){
 }
 
 
-
 // Callback para el blinky pin.
 void BasicTimer2_Callback(void){
 	GPIOxTooglePin(&handlerBlinkyPin);
@@ -475,7 +541,15 @@ void BasicTimer2_Callback(void){
 
 // Callback para la bandera del muestreo de 1 KHz
 void BasicTimer5_Callback(void){
-	flagMuestreo = 1;
+	if(rxData == 'c'){
+		flagMuestreo = 2;
+	}else if(rxData == 'k'){
+		flagMuestreo = 3;
+	}else if(rxData == 'v'){
+		flagMuestreo = 4;
+	}else{
+		flagMuestreo = 1;
+	}
 }
 // Callback para el usart 6.
 void usart6Rx_Callback(void){
