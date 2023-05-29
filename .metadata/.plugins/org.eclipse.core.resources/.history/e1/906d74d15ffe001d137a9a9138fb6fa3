@@ -140,29 +140,6 @@ int main(void){
 		 * se envía es diferente del caracter nulo,
 		 */
 
-		/* Este condicional siempre se ejecuta para tener el muestreo que controla
-		 * las señales de salida de PWM con dutty variable.
-		 */
-		if(flagMuestreo == 1){
-			uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
-			uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
-			int16_t AccelX = AccelX_high << 8 | AccelX_low;
-			X_axis = AccelX * 0.0039 * 9.8;
-
-			uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
-			uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
-			int16_t AccelY = AccelY_high << 8 | AccelY_low;
-			Y_axis = AccelY * 0.0039 * 9.8;
-
-			uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
-			uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
-			int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
-			Z_axis = AccelZ * 0.0039 * 9.8;
-
-			signalsPWM();
-			flagMuestreo = 0;
-
-		}
 
 		if(rxData != '\0'){
 			//writeChar(&USART6Comm, rxData);
@@ -230,6 +207,7 @@ int main(void){
 					writeMsg(&USART6Comm, bufferData);
 					rxData = '\0';
 				}
+				signalsPWM();
 				flagMuestreo = 0;
 			}
 			// Aquí se define el envío constante de datos.
@@ -333,6 +311,45 @@ int main(void){
 
 				}
 
+//				/* Si se presiona la letra "v", el sistema envía datos sobre
+//				 * los 3 ejes de aceleración por medio del USART. Se define sobre
+//				 * la variación de cada uno de los ejes una señal PWM diferente que se
+//				 * activa básicamente luego de escribir sobre el I2C.
+//				 */
+//				if(flagMuestreo == 4){
+//					// Para X.
+//					sprintf(bufferData, "Axis X data (r) \n");
+//					writeMsg(&USART6Comm, bufferData);
+//					uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
+//					uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
+//					int16_t AccelX = AccelX_high << 8 | AccelX_low;
+//					X_axis = AccelX * 0.0039 * 9.8;
+//					sprintf(bufferData, "AccelX = %.2f \n", X_axis);
+//					writeMsg(&USART6Comm, bufferData);
+//					X_1[counter]=X_axis;
+//					// Para Y.
+//					sprintf(bufferData, "Axis Y data (r)\n");
+//					writeMsg(&USART6Comm, bufferData);
+//					uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
+//					uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
+//					int16_t AccelY = AccelY_high << 8 | AccelY_low;
+//					Y_axis = AccelY * 0.0039 * 9.8;
+//					sprintf(bufferData, "AccelY = %.2f \n", Y_axis);
+//					writeMsg(&USART6Comm, bufferData);
+//					Y_1[counter]=Y_axis;
+//					// Para Z.
+//					sprintf(bufferData, "Axis Z data (r)\n");
+//					writeMsg(&USART6Comm, bufferData);
+//					uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
+//					uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
+//					int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
+//					Z_axis = AccelZ * 0.0039 * 9.8;
+//					sprintf(bufferData, "AccelZ = %.2f \n", Z_axis);
+//					writeMsg(&USART6Comm, bufferData);
+//					Z_1[counter]=Z_axis;
+//					signalsPWM();
+//				}
+
 	} // FIN DEL CONDICIONAL RXData !=0
   }// FIN DEL CICLO WHILE DEL MAIN.
 	return (0);
@@ -340,21 +357,20 @@ int main(void){
 
 // Función para calcular el dutty cycle a partir de una regresión lineal.
 /* Se toma un rango ideal para el acelerómetro tomando en cuenta las condiciones
- * en que se vió desde la experiencia que oscilan los valores. La línea recta
- * mantiene los valores de tiempo del dutty cicle dentro de los rangos en que
- * solicita mantenerlos según el texto de la tarea.
+ * en que se vió desde la experiencia que oscilan los valores.
  */
 
 void signalsPWM(void){
-	// Para cada eje debemos conservar la misma recta porque las condiciones so
 	newDutty_1 = 1000 * X_axis + 10000;
 	newDutty_2 = 1000 * Y_axis + 10000;
 	newDutty_3 = 1000 * Z_axis + 10000;
-	// Se actualiza la configuración del PWM bajo la nueva condición.
 	updateDuttyCycle(&handlerTIM3PWM_1, newDutty_1);
 	updateDuttyCycle(&handlerTIM3PWM_2, newDutty_2);
 	updateDuttyCycle(&handlerTIM3PWM_3, newDutty_3);
+
 }
+
+
 
 //Función de configuración de los elementos del sistema.
 void init_Hardware(void){
