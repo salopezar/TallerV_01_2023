@@ -1,4 +1,4 @@
-15:45:23 **** Incremental Build of configuration Debug for project solucionTarea4Especial ****
+11:38:55 **** Incremental Build of configuration Debug for project solucionTarea4Especial ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -18,5 +18,5 @@ arm-none-eabi-objdump -h -S  solucionTarea4Especial.elf  > "solucionTarea4Especi
 Finished building: solucionTarea4Especial.list
  
 
-15:45:23 Build Finished. 0 errors, 0 warnings. (took 416ms)
+11:38:55 Build Finished. 0 errors, 0 warnings. (took 312ms)
 

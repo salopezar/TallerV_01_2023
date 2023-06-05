@@ -9,30 +9,36 @@ C_SRCS += \
 ../Src/ExtiDriver.c \
 ../Src/GPIOxDriver.c \
 ../Src/I2CDriver.c \
+../Src/LCDDriver.c \
 ../Src/PLLDriver.c \
 ../Src/PwmDriver.c \
 ../Src/SysTickDriver.c \
-../Src/USARTxDriver.c 
+../Src/USARTxDriver.c \
+../Src/adcDriver.c 
 
 OBJS += \
 ./Src/BasicTimer.o \
 ./Src/ExtiDriver.o \
 ./Src/GPIOxDriver.o \
 ./Src/I2CDriver.o \
+./Src/LCDDriver.o \
 ./Src/PLLDriver.o \
 ./Src/PwmDriver.o \
 ./Src/SysTickDriver.o \
-./Src/USARTxDriver.o 
+./Src/USARTxDriver.o \
+./Src/adcDriver.o 
 
 C_DEPS += \
 ./Src/BasicTimer.d \
 ./Src/ExtiDriver.d \
 ./Src/GPIOxDriver.d \
 ./Src/I2CDriver.d \
+./Src/LCDDriver.d \
 ./Src/PLLDriver.d \
 ./Src/PwmDriver.d \
 ./Src/SysTickDriver.d \
-./Src/USARTxDriver.d 
+./Src/USARTxDriver.d \
+./Src/adcDriver.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
@@ -42,7 +48,7 @@ Src/%.o Src/%.su: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/I2CDriver.d ./Src/I2CDriver.o ./Src/I2CDriver.su ./Src/PLLDriver.d ./Src/PLLDriver.o ./Src/PLLDriver.su ./Src/PwmDriver.d ./Src/PwmDriver.o ./Src/PwmDriver.su ./Src/SysTickDriver.d ./Src/SysTickDriver.o ./Src/SysTickDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su
+	-$(RM) ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/I2CDriver.d ./Src/I2CDriver.o ./Src/I2CDriver.su ./Src/LCDDriver.d ./Src/LCDDriver.o ./Src/LCDDriver.su ./Src/PLLDriver.d ./Src/PLLDriver.o ./Src/PLLDriver.su ./Src/PwmDriver.d ./Src/PwmDriver.o ./Src/PwmDriver.su ./Src/SysTickDriver.d ./Src/SysTickDriver.o ./Src/SysTickDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su ./Src/adcDriver.d ./Src/adcDriver.o ./Src/adcDriver.su
 
 .PHONY: clean-Src
 
