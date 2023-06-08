@@ -147,6 +147,25 @@ void PLL_Config(PLL_Handler_t *ptrPLLHandler){
 	// Aquí se espera a que el PLL esté listo como reloj principal de la configuracion.
 	while (!(RCC->CFGR & (2<<2)));
 
+	// Se selecciona la señal del PLL.
+	RCC->CFGR |= (RCC_CFGR_MCO1_0);
+	RCC->CFGR |= (RCC_CFGR_MCO1_1);
+
+	// Para un preescaler de 5 unidades.
+	RCC->CFGR |=  (RCC_CFGR_MCO1PRE_0);
+	RCC->CFGR |=  (RCC_CFGR_MCO1PRE_1);
+	RCC->CFGR |=  (RCC_CFGR_MCO1PRE_2);
+
+	// Limpiamos el registo clock control register -> HSITRIM
+	RCC->CR &= ~(RCC_CR_HSITRIM);
+
+	/* En control register se indica el resultado de la ecuación:
+	 * (F_deseada - F_real)/48 kHz.
+	 * Para ajustar el reloj interno del MCU, se escribe 12 en HSITRIM.
+	 */
+	RCC->CR |= RCC_CR_HSITRIM_2;
+	RCC->CR |= RCC_CR_HSITRIM_3;
+
 }// FIN DE LA FUNCIÓN DE CONFIGURACIÓN PARA DISTINTAS FRECUENCIAS.
 
 // Función para saber el estado del PLL y así poder caracterizar lo demás.
@@ -157,6 +176,76 @@ uint32_t getConfigPLL(void){
 	// Se hace la operación para saber el valor actual del reloj. (Asume PLLP =2)
 	uint32_t clockMicro = (HSI_VALUE / PLLM) * PLLN / 2;
 	return clockMicro;
+
+}
+
+void chooseCLK(uint8_t clock){
+	switch(clock){
+	case 1:{
+		//Seleccionamos la señal PLL
+		RCC->CFGR |= (RCC_CFGR_MCO1_0);
+		RCC->CFGR |= (RCC_CFGR_MCO1_1);
+		break;
+	}
+	case 2:{
+		// Seleccionamos la señal HSI
+		RCC->CFGR &= ~(RCC_CFGR_MCO1_0);
+		RCC->CFGR &= ~(RCC_CFGR_MCO1_1);
+		break;
+	}
+	case 3:{
+		// Seleccionamos la señal LSE
+		RCC->CFGR |=  (RCC_CFGR_MCO1_0);
+		RCC->CFGR &= ~(RCC_CFGR_MCO1_1);
+		break;
+	}
+	default:{
+		break;
+		} //Fin caso por defecto
+	}
+}
+
+void prescalerNumber(uint8_t prescaler){
+	switch(prescaler){
+	case 1:{
+		// Sin prescaler
+		RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_0);
+		RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_1);
+		RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_2);
+		break;
+	}
+	case 2:{
+		// prescaler de 2
+		RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_0);
+		RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_1);
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_2);
+		break;
+	}
+	case 3:{
+		// prescaler de 3
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_0);
+		RCC->CFGR &= ~(RCC_CFGR_MCO1PRE_1);
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_2);
+		break;
+	}
+	case 4:{
+		//prescaler de 4
+		RCC->CFGR &=  ~(RCC_CFGR_MCO1PRE_0);
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_1);
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_2);
+		break;
+	}
+	case 5:{
+		//prescaler de 5
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_0);
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_1);
+		RCC->CFGR |=  (RCC_CFGR_MCO1PRE_2);
+		break;
+	}
+	default:{
+		break;
+		} //Fin caso por defecto
+	}
 
 }
 

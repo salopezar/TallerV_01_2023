@@ -55,6 +55,9 @@ typedef struct
 // Definicion de cabeceras para funciones del PLL
 void PLL_Config(PLL_Handler_t *ptrPLLHandler);
 uint32_t getConfigPLL(void);
+void prescalerNumber(uint8_t prescaler);
+void selectCLock(uint8_t clock);
+void chooseCLK(uint8_t clock);
 
 #endif /* PLLDRIVER_H_ */
 

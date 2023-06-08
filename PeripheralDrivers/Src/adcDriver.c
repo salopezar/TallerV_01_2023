@@ -12,7 +12,7 @@ uint16_t	adcRawData = 0;
 uint8_t		counter5 = 0;
 GPIO_Handler_t handlerAdcPin = {0};
 
-
+// Configuración general del ADC.
 void adc_Config(ADC_Config_t *adcConfig){
 	/* 1. Configuramos el PinX para que cumpla la función de canal análogo deseado. */
 	configAnalogPin(adcConfig->channel);
@@ -350,76 +350,86 @@ void configAnalogPin(uint8_t adcChannel){
 	GPIO_Config(&handlerAdcPin);
 }
 
+/*
+ * Esta función recibe como parámetro principal la configuración del
+ * adc para seleccionar los eventos que corresponden internamente a cada
+ * uno de los timers, dependiendo de cuál se quiere elegir como controlador
+ * de la conversión adc. Los bits correspondientes a EXTSEL jerarquizan los
+ * eventos externos dependiendo del canal que se quiera utilizar en cada uno
+ * de los timmers disponibles para este propósito. Ver página 231 del reference
+ * manual.
+ */
 void adcConfigEvents(ADC_Config_t *adcConfig) {
 
-	// Se activa el evento externo como flanco de bajada.
+	// Trigger detection on the rising edge, se toman los flancos
+	// de bajada para los trigger externos
 	ADC1->CR2 |= ADC_CR2_EXTEN_0;
 
 	if (adcConfig->AdcEventType == TIMER_ADC_EVENT) {
 		switch (adcConfig->AdcChannelEvent) {
 
 		case TIM1_CH1: {
-			// Evento TIM1 CC1 event seleccionado para lanzar la conversion ADC
+			// Evento TIM1 CC1 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x0 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM1_CH2: {
-			// Evento TIM1 CC3 event seleccionado para lanzar la conversion ADC
+			// Evento TIM1 CC3 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x1 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM1_CH3: {
-			// Evento TIM1 CC3 event seleccionado para lanzar la conversion ADC
+			// Evento TIM1 CC3 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x2 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM2_CH2: {
-			// Evento TIM2 CC2 event seleccionado para lanzar la conversion ADC
+			// Evento TIM2 CC2 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x3 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM2_CH3: {
-			// Evento TIM2 CC3 event seleccionado para lanzar la conversion ADC
+			// Evento TIM2 CC3 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x4 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM2_CH4: {
-			// Evento TIM2 CC4 event seleccionado para lanzar la conversion ADC
+			// Evento TIM2 CC4 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x5 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM3_CH1: {
-			// Evento TIM3 CC1 event seleccionado para lanzar la conversion ADC
+			// Evento TIM3 CC1 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x7 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM4_CH4: {
-			// Evento TIM4 CC4 event seleccionado para lanzar la conversion ADC
+			// Evento TIM4 CC4 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0x9 << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM5_CH1: {
-			// Evento TIM5 CC1 event seleccionado para lanzar la conversion ADC
+			// Evento TIM5 CC1 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0xA << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM5_CH2: {
-			// Evento TIM5 CC2 event seleccionado para lanzar la conversion ADC
+			// Evento TIM5 CC2 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0xB << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
 
 		case TIM5_CH3: {
-			// Evento TIM5 CC3 event seleccionado para lanzar la conversion ADC
+			// Evento TIM5 CC3 event para lanzar la conversion ADC
 			ADC1->CR2 |= (0xC << ADC_CR2_EXTSEL_Pos);
 			break;
 		}
@@ -530,7 +540,9 @@ void adcMultiChannel(ADC_Config_t *adcConfig, uint8_t numberOfConversion){
 	// Al hacerlo todo 0, estamos seleccionando solo 1 elemento en el conteo de la secuencia
 	ADC1->SQR1 = (numberOfConversion - 1) << ADC_SQR1_L_Pos;
 
-	// Asignamos el canal de la conversión a la primera posición en la secuencia
+	// Asignamos el orden de la conversión dependiendo del canal en que
+	// se esté haciendo, de allí la variación en la agrupación de los
+	// registros.
 	for(counter5 = 0; counter5 < numberOfConversion; counter5++){
 		if(adcConfig->adcMultiChannel[counter5] <= 6){
 			ADC1->SQR3 |= (adcConfig->adcMultiChannel[counter5] << (5 * counter5));

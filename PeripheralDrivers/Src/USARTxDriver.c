@@ -133,31 +133,29 @@ void USART_Config(USART_Handler_t *ptrUsartHandler){
 	 * decida utilizar el usuario. La función getConfig() retorna esta
 	 * frecuencia en que se encuentra actualmente el reloj del sistema PLL,
 	 * por tanto, se considera un condicional que incluye los cálculos para
-	 * la frecuencia de 80 MHz y por defecto recurre a la frecuencia natural.
+	 * la frecuencia de 100 MHz y por defecto recurre a la frecuencia natural.
 	 */
-	if(actualFrecuency == 80000000){
+	if(actualFrecuency == 100000000){
 		// Ver tabla de valores (Tabla 73), Frec = 16MHz, overr = 0;
 		if(ptrUsartHandler->USART_Config.USART_baudrate == USART_BAUDRATE_9600){
-			// El valor a cargar es 520.833 -> Mantiza = 520,fraction = 0.833
-			// Mantiza = 520 = 0x208, fraction = 16 * 0.833 = 13
-			// Valor a cargar 0x208D
+			// El valor a cargar es 651.041 -> Mantiza = 651,fraction = 0.041
+			// Mantiza = 651 = 0x28b, fraction = 16 * 0.041 = 1
+			// Valor a cargar 0x28B1
 			// Configurando el Baudrate generator para una velocidad de 9600bps
-			ptrUsartHandler->ptrUSARTx->BRR = 0x20F5;
+			ptrUsartHandler->ptrUSARTx->BRR = 0x28B1;
 		}
 
 		else if (ptrUsartHandler->USART_Config.USART_baudrate == USART_BAUDRATE_19200) {
-			// El valor a cargar es 260.4166 -> Mantiza = 260,fraction = 0.4166
-			// Mantiza = 260 = 0x104, fraction = 16 * 0.4166 = 7
-			// Escriba acá su código y los comentarios que faltan
-			// Valor a cargar 0x1047
-			ptrUsartHandler->ptrUSARTx->BRR = 0x107B;
+			// El valor a cargar es 325.520 -> Mantiza = 325,fraction = 0.520
+			// Mantiza = 325 = 0x145, fraction = 16 * 0.520 = 8
+			// Valor a cargar 0x1458
+			ptrUsartHandler->ptrUSARTx->BRR = 0x1458;
 		}
 
 		else if(ptrUsartHandler->USART_Config.USART_baudrate == USART_BAUDRATE_115200){
-			// Escriba acá su código y los comentarios que faltan
-			// El valor a cargar es 43.402 -> Mantiza = 43,fraction = 0.402
-			// Mantiza = 43 = 0x2B, fraction = 16 * 0.402 = 6.
-			ptrUsartHandler->ptrUSARTx->BRR = 0x2BF;
+			// El valor a cargar es 54.253 -> Mantiza = 54,fraction = 0.253
+			// Mantiza = 54 = 0x36, fraction = 16 * 0.253 = 4.
+			ptrUsartHandler->ptrUSARTx->BRR = 0x364;
 		}
 	// Caso por defecto de 16 MHz.
 	}else{
