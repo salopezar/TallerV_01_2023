@@ -519,10 +519,10 @@ void parseCommands(char *ptrBufferReception){
 				}
 			}
 		}
-//		for( int i = 0 ; i < 1024; i++){
-//			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
-//			writeMsg(&USART6Comm, bufferData);
-//		}
+		for( int i = 0 ; i < 1024; i++){
+			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
+			writeMsg(&USART6Comm, bufferData);
+		}
 		writeMsg(&USART6Comm, "Datos tomados correctamente \n");
 
 	}else{

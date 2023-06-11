@@ -1,4 +1,4 @@
-20:41:21 **** Incremental Build of configuration Debug for project examenParcialTallerV ****
+15:07:52 **** Incremental Build of configuration Debug for project examenParcialTallerV ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -11,26 +11,7 @@ Finished building target: examenParcialTallerV.elf
  
 arm-none-eabi-size   examenParcialTallerV.elf 
    text	   data	    bss	    dec	    hex	filename
-  43096	    544	  15584	  59224	   e758	examenParcialTallerV.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  examenParcialTallerV.elf  > "examenParcialTallerV.list"
-Finished building: examenParcialTallerV.list
- 
-20:41:31 **** Incremental Build of configuration Debug for project examenParcialTallerV ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout examenParcialTallerV.elf examenParcialTallerV.list examenParcialTallerV.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/examenParcialTallerV/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/examenParcialTallerV/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/examenParcialTallerV/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "examenParcialTallerV.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/examenParcialTallerV/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="examenParcialTallerV.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: examenParcialTallerV.elf
- 
-arm-none-eabi-size   examenParcialTallerV.elf 
-   text	   data	    bss	    dec	    hex	filename
-  43096	    544	  15584	  59224	   e758	examenParcialTallerV.elf
+  42992	    480	  15584	  59056	   e6b0	examenParcialTallerV.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  examenParcialTallerV.elf  > "examenParcialTallerV.list"

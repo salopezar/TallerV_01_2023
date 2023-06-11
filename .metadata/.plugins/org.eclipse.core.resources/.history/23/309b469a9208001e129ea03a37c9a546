@@ -56,25 +56,24 @@
 #include "I2CDriver.h"
 #include "RTCDriver.h"
 
-// Definición de los handlers GPIO necesarios.
+//Definición de los handlers necesarios
 GPIO_Handler_t handlerStateLED				= {0};
 GPIO_Handler_t handlerUSARTPINTX			= {0};
 GPIO_Handler_t handlerUSARTPINRX			= {0};
 GPIO_Handler_t handlerPinFrecuency 			= {0};
-// Definimos los basic timer del blinky y de las banderas.
+
 BasicTimer_Handler_t handlerBlinkyTimer 	= {0};
 BasicTimer_Handler_t handlerTimer5			= {0};
 BasicTimer_Handler_t handlerTimer4			= {0};
 // Para la conversión ADC.
 ADC_Config_t adcConfig = {0};
-// Se define el handler de la comunicacion serial para el USART 6 que me corresponde.
+
 USART_Handler_t USART6Comm = {0};
-// PARA LA CONVERSIÓN ADC: los variables y los arreglos necesarios.
+
 uint8_t adcIsComplete = 0;
 uint16_t dataADC[1] = {0};
 char buffer[64] = {0};
 uint8_t cont = 0;
-// Number of convertions son la cantidad de canales ADC que se necesitan.
 uint8_t numberOfConversion = 2;
 uint16_t cont2 = 0;
 uint16_t dataADCChannel0[256];
@@ -134,8 +133,10 @@ unsigned int firstParameter = 0;
 unsigned int secondParameter = 0;
 unsigned int thirdparameter = 0;
 
-// Para el real time clock
+
+// handler RTC
 RTC_Handler_t handlerRTC = {0};
+
 // variables RTC
 uint8_t segundos;
 uint8_t minutos;
@@ -143,7 +144,9 @@ uint8_t horas;
 uint8_t dia;
 uint8_t mes;
 uint16_t año;
-//punteros para conseguir los datos
+
+
+//punteros
 uint8_t *ptrTime;
 uint8_t *ptrDate;
 void nameMonth (uint8_t numberMonth);
@@ -156,7 +159,7 @@ int main(void){
 
 	/* Loop infinito */
 	while(1){
-		// Comunicacion para los comandos.
+
 		if (rxData != '\0'){
 			bufferReception[counterReception] = rxData;
 			counterReception++;
@@ -167,7 +170,7 @@ int main(void){
 			}
 			rxData = '\0';
 		}
-		// Envio de los strings
+
 		if(stringComplete){
 			parseCommands(bufferReception);
 			stringComplete = false;
@@ -175,12 +178,12 @@ int main(void){
 
 	}
 	return 0;
-}// Final del main
+}
 
 // Función donde se configuran los pines en general.
 void initHardware(void){
 
-	// Se desactiva el reloj HSE porque PH0 está conectado a un oscilador HSE.
+	// Se desactiva el reloj HSE
 	RCC->CR &= ~(RCC_CR_HSEON);
 
 	// Se configura el PLL con los parámetros dados.
@@ -242,6 +245,7 @@ void initHardware(void){
 	USART_Config(&USART6Comm);
 
 	/* Configuración ADC */
+
 	// Cargando la configuración para la conversación ADC
 	adcConfig.dataAlignment			= ADC_ALIGNMENT_RIGHT;
 	adcConfig.resolution			= ADC_RESOLUTION_12_BIT;
@@ -275,7 +279,6 @@ void initHardware(void){
 	enableOutput(&handlerTIM3PWM_1);
 	startPwmSignal(&handlerTIM3PWM_1);
 
-	/* Salidas de las frecuencias de los relojes por comando */
 	handlerPinFrecuency.pGPIOx 									= GPIOA;
 	handlerPinFrecuency.GPIO_PinConfig.GPIO_PinNumber 			= PIN_8;
 	handlerPinFrecuency.GPIO_PinConfig.GPIO_PinMode 			= GPIO_MODE_ALTFN;
@@ -519,14 +522,12 @@ void parseCommands(char *ptrBufferReception){
 				}
 			}
 		}
-//		for( int i = 0 ; i < 1024; i++){
-//			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
-//			writeMsg(&USART6Comm, bufferData);
-//		}
+		for( int i = 0 ; i < 1024; i++){
+			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
+			writeMsg(&USART6Comm, bufferData);
+		}
 		writeMsg(&USART6Comm, "Datos tomados correctamente \n");
 
-	}else{
-		writeMsg(&USART6Comm, "invalid comand, please check the help menu\n");
 	}
 }
 

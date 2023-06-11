@@ -48,13 +48,13 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
 	while(!(RCC->BDCR & RCC_BDCR_LSERDY));
 
 	 /* Se ingresan las claves dadas por el fabricante en el registro de proteccion contra
-	 * escritura (Para más detalles, ver página 438 del reference manual)
+	 * escritura
 	 */
 
     RTC->WPR |= 0xCA;
     RTC->WPR |= 0x53;
 
-    // Se entra en el modo de inicializacion (Se habilita que el usuario pueda cambiar valores)
+    // Se entra en el modo de inicializacion
     RTC->ISR |= RTC_ISR_INIT;
 
     // Se espera a que se active este modo
@@ -63,13 +63,12 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
     //Se configuran los prescaler para obtener 1 Hz, 127 para el asincrono y 255 para el sincrono.
     //32768 Hz / (127 +1) = 256 Hz
     //256 Hz /(255 + 1) = 1 Hz
-    /* Las ecuaciones y la explicacion estan en la pagina 457 del reference manual */
 
     RTC->PRER |= 127 << RTC_PRER_PREDIV_A_Pos;
     RTC->PRER |= 255 << RTC_PRER_PREDIV_S_Pos;
 
 
-    //Se configura el RTC para que tomen directamente valores de los contadores del calendario
+    //Se configura el RTC para que tome valores de los contadores del calendario
 
     RTC->CR |= RTC_CR_BYPSHAD;
 
@@ -94,7 +93,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
     //Para el formato AM-PM
     RTC->TR |= ptrRtcHandler->RTC_AmPm << RTC_TR_PM_Pos;
 
-    /* El registro RTC data register se encuentra en formato BCD,se realiza la division y
+    /* El registro RTC date register se encuentra en formato BCD,se realiza la division y
      * el modulo para obtener decenas y unidades.
      */
 
