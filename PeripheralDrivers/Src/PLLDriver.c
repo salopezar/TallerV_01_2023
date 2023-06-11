@@ -188,14 +188,14 @@ void chooseCLK(uint8_t clock){
 		break;
 	}
 	case 2:{
-		// Seleccionamos la señal HSI
-		RCC->CFGR &= ~(RCC_CFGR_MCO1_0);
+		// Seleccionamos la señal LSE
+		RCC->CFGR |=  (RCC_CFGR_MCO1_0);
 		RCC->CFGR &= ~(RCC_CFGR_MCO1_1);
 		break;
 	}
 	case 3:{
-		// Seleccionamos la señal LSE
-		RCC->CFGR |=  (RCC_CFGR_MCO1_0);
+		// Seleccionamos la señal HSI
+		RCC->CFGR &= ~(RCC_CFGR_MCO1_0);
 		RCC->CFGR &= ~(RCC_CFGR_MCO1_1);
 		break;
 	}
@@ -205,6 +205,7 @@ void chooseCLK(uint8_t clock){
 	}
 }
 
+// Función para el comando que selecciona el preescaler
 void prescalerNumber(uint8_t prescaler){
 	switch(prescaler){
 	case 1:{

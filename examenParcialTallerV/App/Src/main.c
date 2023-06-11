@@ -64,7 +64,8 @@ GPIO_Handler_t handlerPinFrecuency 			= {0};
 
 BasicTimer_Handler_t handlerBlinkyTimer 	= {0};
 BasicTimer_Handler_t handlerTimer5			= {0};
-
+BasicTimer_Handler_t handlerTimer4			= {0};
+// Para la conversión ADC.
 ADC_Config_t adcConfig = {0};
 
 USART_Handler_t USART6Comm = {0};
@@ -86,6 +87,37 @@ PWM_Handler_t handlerTIM3PWM_1 = {0};
 // Se nombra el PLL que cambia la frecuencia de operación del micro.
 PLL_Handler_t handlerPLL = {0};
 
+/* Configración general para el acelerómetro ADXL-345 */
+GPIO_Handler_t SDA = {0};
+GPIO_Handler_t SCL = {0};
+I2C_Handler_t Acelerometer = {0};
+// Variables usadas dentro del I2C.
+uint8_t i2cBuffer = {0};
+uint8_t rxData = 0;
+char bufferData[64] = "Accel ADXL-345 testing...";
+
+// Direcciones para la comunicación con ADXL-345
+#define ACCEL_ADDRESS          0x1D
+#define ACCEL_X1_L             50
+#define ACCEL_X1_H             51
+#define ACCEL_Y1_L             52
+#define ACCEL_Y1_H             53
+#define ACCEL_Z1_L             54
+#define ACCEL_Z1_H             55
+
+#define POWER_CTL              45
+#define WHO_AM_I               0
+// Arreglos para mostrar los datos del acelerómetro
+float X_1[1024] = {0};
+float Y_1[1024] = {0};
+float Z_1[1024] = {0};
+uint16_t counter = {0};
+uint8_t flag = 0;
+uint8_t flag2 = 0;
+// Variables para los ejes del acelerómetro a 2 decimales
+float X_axis = {0};
+float Y_axis = {0};
+float Z_axis = {0};
 //Definición de las cabeceras de las funciones del main
 void initHardware(void);
 // Función para los comandos
@@ -100,7 +132,7 @@ char userMsg[64] = {0};
 unsigned int firstParameter = 0;
 unsigned int secondParameter = 0;
 unsigned int thirdparameter = 0;
-uint8_t rxData = {0};
+
 
 // handler RTC
 RTC_Handler_t handlerRTC = {0};
@@ -109,6 +141,10 @@ RTC_Handler_t handlerRTC = {0};
 uint8_t segundos;
 uint8_t minutos;
 uint8_t horas;
+uint8_t dia;
+uint8_t mes;
+uint16_t año;
+
 
 //punteros
 uint8_t *ptrTime;
@@ -173,6 +209,14 @@ void initHardware(void){
 	handlerBlinkyTimer.TIMx_Config.TIMx_interruptEnable 	= BTIMER_INTERRUPT_ENABLE;
 	BasicTimer_Config(&handlerBlinkyTimer);
 
+	/* Timer para las banderas necesarias para el muestreo del acelerometro */
+	handlerTimer4.ptrTIMx 								    = TIM4;
+	handlerTimer4.TIMx_Config.TIMx_mode 				    = BTIMER_MODE_UP;
+	handlerTimer4.TIMx_Config.TIMx_speed				    = BTIMER_SPEED_100MHz;
+	handlerTimer4.TIMx_Config.TIMx_period 				    = 50;
+	handlerTimer4.TIMx_Config.TIMx_interruptEnable 	        = BTIMER_INTERRUPT_ENABLE;
+	BasicTimer_Config(&handlerTimer4);
+
 	/* Configuración del USART */
 	// Transmisión
 	handlerUSARTPINTX.pGPIOx  							= GPIOA;
@@ -221,7 +265,7 @@ void initHardware(void){
 	HandlerPWM_1.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
 	HandlerPWM_1.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
 	HandlerPWM_1.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
-
+	// Se carga GPIO del PWM.
 	GPIO_Config(&HandlerPWM_1);
 
 	handlerTIM3PWM_1.ptrTIMx           	  =   TIM5;
@@ -229,9 +273,9 @@ void initHardware(void){
 	handlerTIM3PWM_1.config.duttyCicle    =   1500;
 	handlerTIM3PWM_1.config.periodo       =   20000;
 	handlerTIM3PWM_1.config.prescaler     =   100;
-
+	// Se carga el PWM.
 	pwm_Config(&handlerTIM3PWM_1);
-
+	// Se habilita la señal.
 	enableOutput(&handlerTIM3PWM_1);
 	startPwmSignal(&handlerTIM3PWM_1);
 
@@ -241,12 +285,39 @@ void initHardware(void){
 	handlerPinFrecuency.GPIO_PinConfig.GPIO_PinAltFunMode 		= AF0;
 	GPIO_Config(&handlerPinFrecuency);
 
+	// Para el RTC.
 	handlerRTC.RTC_Days = 1;
 	handlerRTC.RTC_Hours = 10;
 	handlerRTC.RTC_Minutes = 30;
 	handlerRTC.RTC_Seconds = 10;
-
+	// Se carga la configuración sobre el RTC.
 	rtc_Config(&handlerRTC);
+
+	//Configuración I2C
+	// Para el acelerómetro ADXL-345
+	SCL.pGPIOx                                    = GPIOB;
+	SCL.GPIO_PinConfig.GPIO_PinNumber             = PIN_8;
+	SCL.GPIO_PinConfig.GPIO_PinMode               = GPIO_MODE_ALTFN;
+	SCL.GPIO_PinConfig.GPIO_PinOPType             = GPIO_OTYPE_OPENDRAIN;
+	SCL.GPIO_PinConfig.GPIO_PinPuPdControl        = GPIO_PUPDR_NOTHING;
+	SCL.GPIO_PinConfig.GPIO_PinSpeed              = GPIO_OSPEED_FAST;
+	SCL.GPIO_PinConfig.GPIO_PinAltFunMode         = AF4;
+	GPIO_Config(&SCL);
+	// SDA pin del ADXL-345
+	SDA.pGPIOx                                    = GPIOB;
+	SDA.GPIO_PinConfig.GPIO_PinNumber             = PIN_9;
+	SDA.GPIO_PinConfig.GPIO_PinMode               = GPIO_MODE_ALTFN;
+	SDA.GPIO_PinConfig.GPIO_PinOPType             = GPIO_OTYPE_OPENDRAIN;
+	SDA.GPIO_PinConfig.GPIO_PinPuPdControl        = GPIO_PUPDR_NOTHING;
+	SDA.GPIO_PinConfig.GPIO_PinSpeed              = GPIO_OSPEED_FAST;
+	SDA.GPIO_PinConfig.GPIO_PinAltFunMode         = AF4;
+	GPIO_Config(&SDA);
+	// Se carga en el I2C.
+	Acelerometer.ptrI2Cx                            = I2C1;
+	Acelerometer.modeI2C                            = I2C_MODE_FM;
+	Acelerometer.slaveAddress                       = ACCEL_ADDRESS;
+	i2c_config(&Acelerometer);
+
 
 } // Fin initHardware
 
@@ -260,8 +331,48 @@ void parseCommands(char *ptrBufferReception){
 	sscanf(ptrBufferReception,"%s %u %u %u %s",cmd,&firstParameter,&secondParameter,&thirdparameter,userMsg);
 	//Este primer comando imprime una lista con los otros comandos que tiene el equipo
 	if (strcmp(cmd, "help") == 0){
-
-		writeMsg(&USART6Comm, "BIENVENIDO AL PARCIAL MÁS DECISIVO DE MI VIDA :3\n");
+		writeMsg(&USART6Comm, "QUE ESTE MENU DE AYUDA TE ACOMPANE\n");
+		writeMsg(&USART6Comm, "⠀⢀⣠⣄⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣴⣶⡾⠿⠿⠿⠿⢷⣶⣦⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⢰⣿⡟⠛⠛⠛⠻⠿⠿⢿⣶⣶⣦⣤⣤⣀⣀⡀⣀⣴⣾⡿⠟⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⡀\n");
+		writeMsg(&USART6Comm, "⠀⠻⣿⣦⡀⠀⠉⠓⠶⢦⣄⣀⠉⠉⠛⠛⠻⠿⠟⠋⠁⠀⠀⠀⣤⡀⠀⠀⢠⠀⠀⠀⣠⠀⠀⠀⠀⠈⠙⠻⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠟⠛⠛⢻⣿\n");
+		writeMsg(&USART6Comm, "⠀⠀⠈⠻⣿⣦⠀⠀⠀⠀⠈⠙⠻⢷⣶⣤⡀⠀⠀⠀⠀⢀⣀⡀⠀⠙⢷⡀⠸⡇⠀⣰⠇⠀⢀⣀⣀⠀⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⡶⠶⠶⠒⠂⠀⠀⣠⣾⠟\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠈⢿⣷⡀⠀⠀⠀⠀⠀⠀⠈⢻⣿⡄⣠⣴⣿⣯⣭⣽⣷⣆⠀⠁⠀⠀⠀⠀⢠⣾⣿⣿⣿⣿⣦⡀⠀⣠⣾⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⣠⣾⡟⠁⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠈⢻⣷⣄⠀⠀⠀⠀⠀⠀⠀⣿⡗⢻⣿⣧⣽⣿⣿⣿⣧⠀⠀⣀⣀⠀⢠⣿⣧⣼⣿⣿⣿⣿⠗⠰⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⡿⠋⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠙⢿⣶⣄⡀⠀⠀⠀⠀⠸⠃⠈⠻⣿⣿⣿⣿⣿⡿⠃⠾⣥⡬⠗⠸⣿⣿⣿⣿⣿⡿⠛⠀⢀⡟⠀⠀⠀⠀⠀⠀⣀⣠⣾⡿⠋⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣷⣶⣤⣤⣄⣰⣄⠀⠀⠉⠉⠉⠁⠀⢀⣀⣠⣄⣀⡀⠀⠉⠉⠉⠀⠀⢀⣠⣾⣥⣤⣤⣤⣶⣶⡿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⢻⣿⠛⢿⣷⣦⣤⣴⣶⣶⣦⣤⣤⣤⣤⣬⣥⡴⠶⠾⠿⠿⠿⠿⠛⢛⣿⣿⣿⣯⡉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣧⡀⠈⠉⠀⠈⠁⣾⠛⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⠟⠉⣹⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣸⣿⣿⣦⣀⠀⠀⠀⢻⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣶⣿⠋⣿⠛⠃⠀⣈⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡿⢿⡀⠈⢹⡿⠶⣶⣼⡇⠀⢀⣀⣀⣤⣴⣾⠟⠋⣡⣿⡟⠀⢻⣶⠶⣿⣿⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣷⡈⢿⣦⣸⠇⢀⡿⠿⠿⡿⠿⠿⣿⠛⠋⠁⠀⣴⠟⣿⣧⡀⠈⢁⣰⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⢻⣦⣈⣽⣀⣾⠃⠀⢸⡇⠀⢸⡇⠀⢀⣠⡾⠋⢰⣿⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠿⢿⣿⣿⡟⠛⠃⠀⠀⣾⠀⠀⢸⡇⠐⠿⠋⠀⠀⣿⢻⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠁⢀⡴⠋⠀⣿⠀⠀⢸⠇⠀⠀⠀⠀⠀⠁⢸⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⡿⠟⠋⠀⠀⠀⣿⠀⠀⣸⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣁⣀⠀⠀⠀⠀⣿⡀⠀⣿⠀⠀⠀⠀⠀⠀⢀⣈⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠛⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠟⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
+		writeMsg(&USART6Comm, "Help Menu CMDs:\n");
+		writeMsg(&USART6Comm, "Por favor ingrese el esquema |comando| (espacio) los datos requeridos en cada caso\n");
+		writeMsg(&USART6Comm, "Los siguientes comandos indican las diferentes funciones del sistema:\n");
+		writeMsg(&USART6Comm, "1)help                     Este comando despliega el menu de ayuda\n");
+		writeMsg(&USART6Comm, "2)select_Clock_Signal***** Presione 1 para señal PLL, 2 para LSE y 3 para HSI\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero\n");
+		writeMsg(&USART6Comm, "3)select_Prescaler******** Indique valores enteros entre 1 y 5 para el prescaler\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero\n");
+		writeMsg(&USART6Comm, "4)set_Time**************** Usted configura su hora inicial: Horas: minutos: segundos\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero + entero + entero\n");
+		writeMsg(&USART6Comm, "5)current_time************ El sistema retorna la hora actual: Horas: minutos: segundos\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero + entero + entero\n");
+		writeMsg(&USART6Comm, "6)configFecha************* Usted configura su fecha inicial: Dias: meses: año\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero + entero + entero\n");
+		writeMsg(&USART6Comm, "7)Fecha******************* El sistema retorna la fecha actual: Dias: meses: año\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero + entero + entero\n");
+		writeMsg(&USART6Comm, "8)init_ADC**************** Se inicializa y muestra 256 datos de 2 canales de ADC\n");
+		writeMsg(&USART6Comm, "************************** Solo comando\n");
+		writeMsg(&USART6Comm, "9)signal_Sampling********* Se ingresa el periodo de muestreo de la señal de PWM\n");
+		writeMsg(&USART6Comm, "************************** Comando + entero\n");
+		writeMsg(&USART6Comm, "10)muestreo*************** Se inicializa la toma de datos del acelerometro mostrando 256 datos\n");
+		writeMsg(&USART6Comm, "************************** Comando\n");
 		writeMsg(&USART6Comm, "▒▒▒▒▒▒▒▓\n");
 		writeMsg(&USART6Comm, "▒▒▒▒▒▒▒▓▓▓\n");
 		writeMsg(&USART6Comm, "▒▓▓▓▓▓▓░░░▓\n");
@@ -280,15 +391,7 @@ void parseCommands(char *ptrBufferReception){
 		writeMsg(&USART6Comm, "▒▓▒▓▓▓▓▓▓▓▓▓▓\n");
 		writeMsg(&USART6Comm, "▒▓▒▒▒▒▒▒▒▓\n");
 		writeMsg(&USART6Comm, "▒▒▓▒▒▒▒▒▓\n");
-		writeMsg(&USART6Comm, "Help Menu CMDs:\n");
-		writeMsg(&USART6Comm, "1)help                     --Imprime este menu \n");
-		writeMsg(&USART6Comm, "2)Select clock signal      --PLL,LSE,HSI\n");
-		writeMsg(&USART6Comm, "3)Select prescaler         --MCO1 : 1,2,3,4,5\n");
-		writeMsg(&USART6Comm, "4)set Time         		      --Hora inicial: Horas: minutos: segundos\n");
-		writeMsg(&USART6Comm, "5)current time        	    --Hora actual: Horas: minutos: segundos\n");
-		writeMsg(&USART6Comm, "6)init ADC        	    --Inicializa y muestra 256 datos de 2 canales de ADC\n");
-		writeMsg(&USART6Comm, "7)signal sampling       	    --Periodo de muestreo de la señal de PWM\n");
-
+		writeMsg(&USART6Comm, "ESPERO HABERTE AYUDADO\n");
 
 	}else if(strcmp(cmd, "select_Clock_Signal") == 0){
 		if(firstParameter == 1){
@@ -300,6 +403,8 @@ void parseCommands(char *ptrBufferReception){
 		}else if(firstParameter == 3){
 		chooseCLK(firstParameter);
 		writeMsg(&USART6Comm, "selected HSI\n");
+		}else{
+			writeMsg(&USART6Comm, "Invalid comand, please read the help menu\n");
 		}
 
 	}else if(strcmp(cmd, "select_Prescaler") == 0){
@@ -318,25 +423,60 @@ void parseCommands(char *ptrBufferReception){
 		}else if(firstParameter == 5){
 		prescalerNumber(firstParameter);
 		writeMsg(&USART6Comm, "division in 5\n");
+		}else{
+			writeMsg(&USART6Comm, "Invalid comand, please read the help menu\n");
 		}
 	}else if(strcmp(cmd,"set_Time") == 0){
+		if(firstParameter > 23){
+			firstParameter = 23;
+		}
+		if(secondParameter > 59){
+			secondParameter = 59;
+		}
+		if(thirdparameter > 59){
+			thirdparameter = 59;
+		}
 		handlerRTC.RTC_Hours = firstParameter;
 		handlerRTC.RTC_Minutes = secondParameter;
 		handlerRTC.RTC_Seconds = thirdparameter;
 		rtc_Config(&handlerRTC);
-		sprintf(buffer,"Hora %u : %u : %u \n",firstParameter,secondParameter,thirdparameter);
+		sprintf(buffer,"Hora %02u : %02u : %02u \n",firstParameter,secondParameter,thirdparameter);
 		writeMsg(&USART6Comm, buffer);
 	}else if(strcmp(cmd,"current_time") == 0){
 		ptrTime = read_Time();
 		segundos = ptrTime[0];
 		minutos = ptrTime[1];
 		horas	= ptrTime[2];
-		sprintf(buffer,"Hora Actual %u : %u : %u \n",horas,minutos,segundos);
+		sprintf(buffer,"Hora Actual %02u : %02u : %02u \n",horas,minutos,segundos);
 		writeMsg(&USART6Comm, buffer);
+	}else if(strcmp(cmd,"configFecha") == 0){
+		if(firstParameter > 31){
+			firstParameter = 31;
+		}
+		if(secondParameter > 12){
+			secondParameter = 12;
+		}
+		if(thirdparameter < 2000 || thirdparameter > 2099){
+			thirdparameter = 2099;
+		}
+		handlerRTC.RTC_Days   = firstParameter;
+		handlerRTC.RTC_Months = secondParameter;
+		handlerRTC.RTC_Years  = thirdparameter;
+		rtc_Config(&handlerRTC);
+		sprintf(buffer,"Date %02u : %02u : %02u \n", firstParameter,secondParameter,thirdparameter);
+		writeMsg(&USART6Comm,buffer);
+
+	}else if(strcmp(cmd,"Fecha") == 0){
+		ptrDate = read_Date();
+		dia  = ptrDate[0];
+		mes  = ptrDate[1];
+		año  = ptrDate[2];
+		sprintf(buffer,"Fecha actual %02u : %02u : %02u \n",dia ,mes,año);
+		writeMsg(&USART6Comm,buffer);
 	}else if(strcmp(cmd,"init_ADC") == 0){
 		if(adcIsComplete == 1){
-			for(uint16_t j = 0; j < 257; j++){
-				sprintf(buffer, "Lectura Canal 0 y 1: %u, %u\n", dataADCChannel0[j], dataADCChannel1[j]);
+			for(uint16_t j = 0; j < 256; j++){
+				sprintf(buffer, "[#%d]: %u, %u\n",j, dataADCChannel0[j], dataADCChannel1[j]);
 				writeMsg(&USART6Comm, buffer);
 			}
 			adcIsComplete = 0;
@@ -344,13 +484,50 @@ void parseCommands(char *ptrBufferReception){
 	}else if(strcmp(cmd,"signal_Sampling") == 0){
 //		float periodoMuestreo = 1 / firstParameter;
 		handlerTIM3PWM_1.config.periodo = firstParameter;
+//		handlerTIM3PWM_1.config.duttyCicle = firstParameter / 2;
 		if(firstParameter >= 66 && firstParameter <= 125){
 			pwm_Config(&handlerTIM3PWM_1);
-			sprintf(buffer,"Velocidad de muestreo %u \n",firstParameter);
+			sprintf(buffer,"periodo de muestreo en microsegundos %u \n",firstParameter);
 			writeMsg(&USART6Comm, buffer);
 		}else{
 			writeMsg(&USART6Comm, "Invalid signal_Sampling\n");
 		}
+	}else if(strcmp(cmd,"muestreo") == 0){
+		writeMsg(&USART6Comm, "Tomando muestreo.....\n");
+		flag = 1;
+		i2c_writeSingleRegister(&Acelerometer, POWER_CTL,45);
+		while(counter < 1024){
+			if(flag2){
+				uint8_t AccelX_low =  i2c_readSingleRegister(&Acelerometer, ACCEL_X1_L);
+				uint8_t AccelX_high = i2c_readSingleRegister(&Acelerometer, ACCEL_X1_H);
+				int16_t AccelX = AccelX_high << 8 | AccelX_low;
+				X_axis = AccelX * 0.0039 * 9.8;
+
+				uint8_t AccelY_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Y1_L);
+				uint8_t AccelY_high = i2c_readSingleRegister(&Acelerometer,ACCEL_Y1_H);
+				int16_t AccelY = AccelY_high << 8 | AccelY_low;
+				Y_axis = AccelY * 0.0039 * 9.8;
+
+				uint8_t AccelZ_low = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_L);
+				uint8_t AccelZ_high = i2c_readSingleRegister(&Acelerometer, ACCEL_Z1_H);
+				int16_t AccelZ = AccelZ_high << 8 | AccelZ_low;
+				Z_axis = AccelZ * 0.0039 * 9.8;
+				X_1[counter] = X_axis;
+			    Y_1[counter] = Y_axis;
+				Z_1[counter] = Z_axis;
+				counter++;
+				flag2 = 0;
+				if(counter == 1024){
+					break;
+				}
+			}
+		}
+		for( int i = 0 ; i < 1024; i++){
+			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
+			writeMsg(&USART6Comm, bufferData);
+		}
+		writeMsg(&USART6Comm, "Datos tomados correctamente \n");
+
 	}
 }
 
@@ -358,23 +535,20 @@ void parseCommands(char *ptrBufferReception){
 void BasicTimer2_Callback(void){
 	GPIOxTooglePin (&handlerStateLED);
 }
+// Banderas para el muestreo del ADXL345.
+void BasicTimer4_Callback(void){
+if(flag){
+	flag2 = 1;
+}
+}
 
+// Callback para los comandos del USART.
 void usart6Rx_Callback(void){
 	rxData = getRxData();
 }
 
-// Esta función controla el contador del ADC.
+// Esta función controla el contador del ADC.(Hace las veces de callback)
 void adcComplete_Callback(void){
-
-//	if(cont < numberOfConversion){
-//		dataADC[cont] = getADC();
-//		cont++;
-//	}
-//	else{
-//		adcIsComplete = 1;
-//	}
-
-
 	if(cont == 0){
 		dataADCChannel0[cont2] = getADC();
 	}

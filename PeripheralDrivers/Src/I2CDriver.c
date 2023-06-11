@@ -39,7 +39,7 @@ void i2c_config(I2C_Handler_t *ptrHandlerI2C){
 	 * por el periferico para generar la señal de reloj para el bus I2C
 	 */
 	ptrHandlerI2C->ptrI2Cx->CR2 &= ~(0b111111 << I2C_CR2_FREQ_Pos); // Borramos la configuración previa
-	ptrHandlerI2C->ptrI2Cx->CR2 |= (MAIN_CLOCK_80_MHz_FOR_I2C << I2C_CR2_FREQ_Pos);// Seleccionamos 80 MHz
+	ptrHandlerI2C->ptrI2Cx->CR2 |= (MAIN_CLOCK_100_MHz_FOR_I2C << I2C_CR2_FREQ_Pos);// Seleccionamos 80 MHz
 
 	/* 4. Configuramos el modo I2C en el que el sistema funciona
 	 * En esta configuración se incluye también la configuración del reloj

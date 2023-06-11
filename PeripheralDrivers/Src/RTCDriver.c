@@ -158,12 +158,10 @@ uint8_t* read_Date(void){
     RTC_wdu = (RTC->DR & RTC_DR_WDU_Msk)>>RTC_DR_WDU_Pos;
 
     // Se almacenan los datos en el arreglo
-    date[0] = RTC_diaUnidades;
-    date[1] = RTC_diaDecenas;
-    date[2] = RTC_mes;
-    date[3] = RTC_añoUnidades;
-    date[4] = RTC_añoDecenas;
-    date[5] = RTC_wdu;
+    date[0] = (RTC_diaDecenas * 10) + RTC_diaUnidades;
+    date[1] = RTC_mes;
+    date[2] = (RTC_añoDecenas * 10) + RTC_añoUnidades;
+    date[3] = RTC_wdu;
 
     return date;
 
