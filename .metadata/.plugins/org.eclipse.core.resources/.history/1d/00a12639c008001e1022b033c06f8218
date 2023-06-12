@@ -375,7 +375,7 @@ void parseCommands(char *ptrBufferReception){
 		writeMsg(&USART6Comm, "************************** Comando + entero + entero + entero\n");
 		writeMsg(&USART6Comm, "8)init_ADC**************** Se inicializa y muestra 256 datos de 2 canales de ADC\n");
 		writeMsg(&USART6Comm, "************************** Solo comando\n");
-		writeMsg(&USART6Comm, "9)signal_Sampling********* Se ingresa el periodo de muestreo de la señal de PWM en microsegundos\n");
+		writeMsg(&USART6Comm, "9)signal_Sampling********* Se ingresa el periodo de muestreo de la señal de PWM\n");
 		writeMsg(&USART6Comm, "************************** Comando + entero\n");
 		writeMsg(&USART6Comm, "10)muestreo*************** Se inicializa la toma de datos del acelerometro mostrando 256 datos\n");
 		writeMsg(&USART6Comm, "************************** Comando\n");
@@ -492,7 +492,7 @@ void parseCommands(char *ptrBufferReception){
 			// Se actualiza la nueva frecuencia con un duttycicle igual a la mitad de la nueva frecuencia
 			updateFrequency(&handlerTIM3PWM_1, firstParameter);
 			updateDuttyCycle(&handlerTIM3PWM_1, firstParameter/2);
-			writeMsg(&USART6Comm, "El periodo de la señal de muestreo fue actualizado en microsegundos\n");
+			writeMsg(&USART6Comm, "El periodo de la señal de muestreo fue actualizado\n");
 			writeMsg(&USART6Comm, "Recuerde que los datos de la conversion se dan en voltios\n");
 		}else{
 			writeMsg(&USART6Comm, "Invalid signal_Sampling\n");

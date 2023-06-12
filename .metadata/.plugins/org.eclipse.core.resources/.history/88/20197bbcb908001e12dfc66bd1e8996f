@@ -77,8 +77,8 @@ uint8_t cont = 0;
 // Number of convertions son la cantidad de canales ADC que se necesitan.
 uint8_t numberOfConversion = 2;
 uint16_t cont2 = 0;
-float dataADCChannel0[256];
-float dataADCChannel1[256];
+uint16_t dataADCChannel0[256];
+uint16_t dataADCChannel1[256];
 
 // PWM para el muestreo a las frecuencias que se quieren.
 GPIO_Handler_t HandlerPWM_1 = {0};
@@ -375,7 +375,7 @@ void parseCommands(char *ptrBufferReception){
 		writeMsg(&USART6Comm, "************************** Comando + entero + entero + entero\n");
 		writeMsg(&USART6Comm, "8)init_ADC**************** Se inicializa y muestra 256 datos de 2 canales de ADC\n");
 		writeMsg(&USART6Comm, "************************** Solo comando\n");
-		writeMsg(&USART6Comm, "9)signal_Sampling********* Se ingresa el periodo de muestreo de la señal de PWM en microsegundos\n");
+		writeMsg(&USART6Comm, "9)signal_Sampling********* Se ingresa el periodo de muestreo de la señal de PWM\n");
 		writeMsg(&USART6Comm, "************************** Comando + entero\n");
 		writeMsg(&USART6Comm, "10)muestreo*************** Se inicializa la toma de datos del acelerometro mostrando 256 datos\n");
 		writeMsg(&USART6Comm, "************************** Comando\n");
@@ -482,18 +482,21 @@ void parseCommands(char *ptrBufferReception){
 	}else if(strcmp(cmd,"init_ADC") == 0){
 		if(adcIsComplete == 1){
 			for(uint16_t j = 0; j < 256; j++){
-				sprintf(buffer, "[#%d]: %.2f, %.2f\n",j, dataADCChannel0[j]*3.3f/4095.f, dataADCChannel1[j]*3.3f/4095.f);
+				sprintf(buffer, "[#%d]: %u, %u\n",j, dataADCChannel0[j], dataADCChannel1[j]);
 				writeMsg(&USART6Comm, buffer);
 			}
 			adcIsComplete = 0;
 		}
 	}else if(strcmp(cmd,"signal_Sampling") == 0){
-		if((33 <= firstParameter) && (firstParameter <= 62)){
+		if( (8000 <= firstParameter) && (&handlerTIM3PWM_1 <= 25000)){
+			// Se convierte el valor ingresado por el usuario
+			float convFreq = (1000000/firstParameter);
+			// Se redondea al proximo entero
+			convFreq = round(convFreq);
 			// Se actualiza la nueva frecuencia con un duttycicle igual a la mitad de la nueva frecuencia
-			updateFrequency(&handlerTIM3PWM_1, firstParameter);
-			updateDuttyCycle(&handlerTIM3PWM_1, firstParameter/2);
-			writeMsg(&USART6Comm, "El periodo de la señal de muestreo fue actualizado en microsegundos\n");
-			writeMsg(&USART6Comm, "Recuerde que los datos de la conversion se dan en voltios\n");
+			updateFrequency(&handlerTIM3PWM_1, convFreq);
+			updateDuttyCycle(&handlerTIM3PWM_1, convFreq/2);
+			writeMsg(&USART6Comm, "La frecuencia de la señal de muestreo fue actualizada\n");
 		}else{
 			writeMsg(&USART6Comm, "Invalid signal_Sampling\n");
 		}
@@ -527,10 +530,10 @@ void parseCommands(char *ptrBufferReception){
 				}
 			}
 		}
-		for( int i = 0 ; i < 1024; i++){
-			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
-			writeMsg(&USART6Comm, bufferData);
-		}
+//		for( int i = 0 ; i < 1024; i++){
+//			sprintf(bufferData, " AccelX = %.2f ; AccelY = %.2f ; AccelZ = %.2f \n",X_1[i],Y_1[i],Z_1[i]);
+//			writeMsg(&USART6Comm, bufferData);
+//		}
 		writeMsg(&USART6Comm, "Datos tomados correctamente \n");
 
 	}else{

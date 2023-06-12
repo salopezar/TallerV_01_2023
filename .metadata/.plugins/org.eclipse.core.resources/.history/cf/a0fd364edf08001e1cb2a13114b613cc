@@ -480,13 +480,14 @@ void parseCommands(char *ptrBufferReception){
 		sprintf(buffer,"Fecha actual %02u : %02u : %02u \n",dia ,mes,año);
 		writeMsg(&USART6Comm,buffer);
 	}else if(strcmp(cmd,"init_ADC") == 0){
-		if(adcIsComplete == 1){
+		adcIsComplete = 1;
+		while(adcIsComplete){
+			__NOP();
+		}
 			for(uint16_t j = 0; j < 256; j++){
 				sprintf(buffer, "[#%d]: %.2f, %.2f\n",j, dataADCChannel0[j]*3.3f/4095.f, dataADCChannel1[j]*3.3f/4095.f);
 				writeMsg(&USART6Comm, buffer);
 			}
-			adcIsComplete = 0;
-		}
 	}else if(strcmp(cmd,"signal_Sampling") == 0){
 		if((33 <= firstParameter) && (firstParameter <= 62)){
 			// Se actualiza la nueva frecuencia con un duttycicle igual a la mitad de la nueva frecuencia
