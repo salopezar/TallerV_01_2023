@@ -1,4 +1,4 @@
-11:38:55 **** Incremental Build of configuration Debug for project solucionTarea4Especial ****
+15:29:15 **** Build of configuration Debug for project solucionTarea4Especial ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -11,12 +11,12 @@ Finished building target: solucionTarea4Especial.elf
  
 arm-none-eabi-size   solucionTarea4Especial.elf 
    text	   data	    bss	    dec	    hex	filename
-  32820	    544	  25968	  59332	   e7c4	solucionTarea4Especial.elf
+  32916	    544	  25968	  59428	   e824	solucionTarea4Especial.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  solucionTarea4Especial.elf  > "solucionTarea4Especial.list"
 Finished building: solucionTarea4Especial.list
  
 
-11:38:55 Build Finished. 0 errors, 0 warnings. (took 312ms)
+15:29:15 Build Finished. 0 errors, 0 warnings. (took 415ms)
 

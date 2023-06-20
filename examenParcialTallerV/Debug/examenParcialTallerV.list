@@ -6319,57 +6319,57 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  8003074:	f003 0340 	and.w	r3, r3, #64	; 0x40
  8003078:	2b00      	cmp	r3, #0
  800307a:	d0f9      	beq.n	8003070 <rtc_Config+0x78>
-
     //Se configuran los prescaler para obtener 1 Hz, 127 para el asincrono y 255 para el sincrono.
     //32768 Hz / (127 +1) = 256 Hz
     //256 Hz /(255 + 1) = 1 Hz
     /* Las ecuaciones y la explicacion estan en la pagina 457 del reference manual */
 
+    RTC->PRER |= 127 << RTC_PRER_PREDIV_A_Pos;
  800307c:	4b87      	ldr	r3, [pc, #540]	; (800329c <rtc_Config+0x2a4>)
  800307e:	691b      	ldr	r3, [r3, #16]
  8003080:	4a86      	ldr	r2, [pc, #536]	; (800329c <rtc_Config+0x2a4>)
  8003082:	f443 03fe 	orr.w	r3, r3, #8323072	; 0x7f0000
  8003086:	6113      	str	r3, [r2, #16]
-    RTC->PRER |= 127 << RTC_PRER_PREDIV_A_Pos;
+    RTC->PRER |= 255 << RTC_PRER_PREDIV_S_Pos;
  8003088:	4b84      	ldr	r3, [pc, #528]	; (800329c <rtc_Config+0x2a4>)
  800308a:	691b      	ldr	r3, [r3, #16]
  800308c:	4a83      	ldr	r2, [pc, #524]	; (800329c <rtc_Config+0x2a4>)
  800308e:	f043 03ff 	orr.w	r3, r3, #255	; 0xff
  8003092:	6113      	str	r3, [r2, #16]
-    RTC->PRER |= 255 << RTC_PRER_PREDIV_S_Pos;
 
 
     //Se configura el RTC para que tomen directamente valores de los contadores del calendario
 
+    RTC->CR |= RTC_CR_BYPSHAD;
  8003094:	4b81      	ldr	r3, [pc, #516]	; (800329c <rtc_Config+0x2a4>)
  8003096:	689b      	ldr	r3, [r3, #8]
  8003098:	4a80      	ldr	r2, [pc, #512]	; (800329c <rtc_Config+0x2a4>)
  800309a:	f043 0320 	orr.w	r3, r3, #32
  800309e:	6093      	str	r3, [r2, #8]
-    RTC->CR |= RTC_CR_BYPSHAD;
 
     // Se reinician los contadores del calendario
+    RTC->TR = 0;
  80030a0:	4b7e      	ldr	r3, [pc, #504]	; (800329c <rtc_Config+0x2a4>)
  80030a2:	2200      	movs	r2, #0
  80030a4:	601a      	str	r2, [r3, #0]
-    RTC->TR = 0;
+    RTC->DR = 0;
  80030a6:	4b7d      	ldr	r3, [pc, #500]	; (800329c <rtc_Config+0x2a4>)
  80030a8:	2200      	movs	r2, #0
  80030aa:	605a      	str	r2, [r3, #4]
-    RTC->DR = 0;
 
     // El formato está en 24 horas.
+    RTC->CR &= ~RTC_CR_FMT;
  80030ac:	4b7b      	ldr	r3, [pc, #492]	; (800329c <rtc_Config+0x2a4>)
  80030ae:	689b      	ldr	r3, [r3, #8]
  80030b0:	4a7a      	ldr	r2, [pc, #488]	; (800329c <rtc_Config+0x2a4>)
  80030b2:	f023 0340 	bic.w	r3, r3, #64	; 0x40
  80030b6:	6093      	str	r3, [r2, #8]
-    RTC->CR &= ~RTC_CR_FMT;
 
     /* El registro time register esta en formato BCD. se realiza la division y el modulo para
      * obtener decenas y unidades.
      */
 
+    RTC->TR |= ptrRtcHandler->RTC_Hours/10 << RTC_TR_HT_Pos;
  80030b8:	4b78      	ldr	r3, [pc, #480]	; (800329c <rtc_Config+0x2a4>)
  80030ba:	681b      	ldr	r3, [r3, #0]
  80030bc:	687a      	ldr	r2, [r7, #4]
@@ -6383,7 +6383,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  80030ce:	4a73      	ldr	r2, [pc, #460]	; (800329c <rtc_Config+0x2a4>)
  80030d0:	430b      	orrs	r3, r1
  80030d2:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_Hours/10 << RTC_TR_HT_Pos;
+    RTC->TR |= ptrRtcHandler->RTC_Hours%10 << RTC_TR_HU_Pos;
  80030d4:	4b71      	ldr	r3, [pc, #452]	; (800329c <rtc_Config+0x2a4>)
  80030d6:	6818      	ldr	r0, [r3, #0]
  80030d8:	687b      	ldr	r3, [r7, #4]
@@ -6401,7 +6401,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  80030f2:	4a6a      	ldr	r2, [pc, #424]	; (800329c <rtc_Config+0x2a4>)
  80030f4:	4303      	orrs	r3, r0
  80030f6:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_Hours%10 << RTC_TR_HU_Pos;
+    RTC->TR |= ptrRtcHandler->RTC_Minutes/10 << RTC_TR_MNT_Pos;
  80030f8:	4b68      	ldr	r3, [pc, #416]	; (800329c <rtc_Config+0x2a4>)
  80030fa:	681b      	ldr	r3, [r3, #0]
  80030fc:	687a      	ldr	r2, [r7, #4]
@@ -6415,7 +6415,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  800310e:	4a63      	ldr	r2, [pc, #396]	; (800329c <rtc_Config+0x2a4>)
  8003110:	430b      	orrs	r3, r1
  8003112:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_Minutes/10 << RTC_TR_MNT_Pos;
+    RTC->TR |= ptrRtcHandler->RTC_Minutes%10 << RTC_TR_MNU_Pos;
  8003114:	4b61      	ldr	r3, [pc, #388]	; (800329c <rtc_Config+0x2a4>)
  8003116:	6818      	ldr	r0, [r3, #0]
  8003118:	687b      	ldr	r3, [r7, #4]
@@ -6433,7 +6433,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  8003132:	4a5a      	ldr	r2, [pc, #360]	; (800329c <rtc_Config+0x2a4>)
  8003134:	4303      	orrs	r3, r0
  8003136:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_Minutes%10 << RTC_TR_MNU_Pos;
+    RTC->TR |= ptrRtcHandler->RTC_Seconds/10  << RTC_TR_ST_Pos;
  8003138:	4b58      	ldr	r3, [pc, #352]	; (800329c <rtc_Config+0x2a4>)
  800313a:	681b      	ldr	r3, [r3, #0]
  800313c:	687a      	ldr	r2, [r7, #4]
@@ -6447,7 +6447,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  800314e:	4a53      	ldr	r2, [pc, #332]	; (800329c <rtc_Config+0x2a4>)
  8003150:	430b      	orrs	r3, r1
  8003152:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_Seconds/10  << RTC_TR_ST_Pos;
+    RTC->TR |= ptrRtcHandler->RTC_Seconds%10 << RTC_TR_SU_Pos;
  8003154:	4b51      	ldr	r3, [pc, #324]	; (800329c <rtc_Config+0x2a4>)
  8003156:	6818      	ldr	r0, [r3, #0]
  8003158:	687b      	ldr	r3, [r7, #4]
@@ -6464,9 +6464,9 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  8003170:	4a4a      	ldr	r2, [pc, #296]	; (800329c <rtc_Config+0x2a4>)
  8003172:	4303      	orrs	r3, r0
  8003174:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_Seconds%10 << RTC_TR_SU_Pos;
 
     //Para el formato AM-PM
+    RTC->TR |= ptrRtcHandler->RTC_AmPm << RTC_TR_PM_Pos;
  8003176:	4b49      	ldr	r3, [pc, #292]	; (800329c <rtc_Config+0x2a4>)
  8003178:	681b      	ldr	r3, [r3, #0]
  800317a:	687a      	ldr	r2, [r7, #4]
@@ -6476,12 +6476,12 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  8003182:	4a46      	ldr	r2, [pc, #280]	; (800329c <rtc_Config+0x2a4>)
  8003184:	430b      	orrs	r3, r1
  8003186:	6013      	str	r3, [r2, #0]
-    RTC->TR |= ptrRtcHandler->RTC_AmPm << RTC_TR_PM_Pos;
 
     /* El registro RTC data register se encuentra en formato BCD,se realiza la division y
      * el modulo para obtener decenas y unidades.
      */
 
+    RTC->DR |= ptrRtcHandler->RTC_Months%10 << RTC_DR_MU_Pos;
  8003188:	4b44      	ldr	r3, [pc, #272]	; (800329c <rtc_Config+0x2a4>)
  800318a:	6858      	ldr	r0, [r3, #4]
  800318c:	687b      	ldr	r3, [r7, #4]
@@ -6499,7 +6499,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  80031a6:	4a3d      	ldr	r2, [pc, #244]	; (800329c <rtc_Config+0x2a4>)
  80031a8:	4303      	orrs	r3, r0
  80031aa:	6053      	str	r3, [r2, #4]
-    RTC->DR |= ptrRtcHandler->RTC_Months%10 << RTC_DR_MU_Pos;
+    RTC->DR |= ptrRtcHandler->RTC_Months/10 << RTC_DR_MT_Pos;
  80031ac:	4b3b      	ldr	r3, [pc, #236]	; (800329c <rtc_Config+0x2a4>)
  80031ae:	685b      	ldr	r3, [r3, #4]
  80031b0:	687a      	ldr	r2, [r7, #4]
@@ -6513,7 +6513,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  80031c2:	4a36      	ldr	r2, [pc, #216]	; (800329c <rtc_Config+0x2a4>)
  80031c4:	430b      	orrs	r3, r1
  80031c6:	6053      	str	r3, [r2, #4]
-    RTC->DR |= ptrRtcHandler->RTC_Months/10 << RTC_DR_MT_Pos;
+    RTC->DR |= ptrRtcHandler->RTC_Days/10 << RTC_DR_DT_Pos;
  80031c8:	4b34      	ldr	r3, [pc, #208]	; (800329c <rtc_Config+0x2a4>)
  80031ca:	685b      	ldr	r3, [r3, #4]
  80031cc:	687a      	ldr	r2, [r7, #4]
@@ -6527,7 +6527,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  80031de:	4a2f      	ldr	r2, [pc, #188]	; (800329c <rtc_Config+0x2a4>)
  80031e0:	430b      	orrs	r3, r1
  80031e2:	6053      	str	r3, [r2, #4]
-    RTC->DR |= ptrRtcHandler->RTC_Days/10 << RTC_DR_DT_Pos;
+    RTC->DR |= ptrRtcHandler->RTC_Days%10 << RTC_DR_DU_Pos;
  80031e4:	4b2d      	ldr	r3, [pc, #180]	; (800329c <rtc_Config+0x2a4>)
  80031e6:	6858      	ldr	r0, [r3, #4]
  80031e8:	687b      	ldr	r3, [r7, #4]
@@ -6544,7 +6544,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  8003200:	4a26      	ldr	r2, [pc, #152]	; (800329c <rtc_Config+0x2a4>)
  8003202:	4303      	orrs	r3, r0
  8003204:	6053      	str	r3, [r2, #4]
-    RTC->DR |= ptrRtcHandler->RTC_Days%10 << RTC_DR_DU_Pos;
+    RTC->DR |= ptrRtcHandler->RTC_Wdu<< RTC_DR_WDU_Pos;
  8003206:	4b25      	ldr	r3, [pc, #148]	; (800329c <rtc_Config+0x2a4>)
  8003208:	685b      	ldr	r3, [r3, #4]
  800320a:	687a      	ldr	r2, [r7, #4]
@@ -6554,11 +6554,11 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  8003212:	4a22      	ldr	r2, [pc, #136]	; (800329c <rtc_Config+0x2a4>)
  8003214:	430b      	orrs	r3, r1
  8003216:	6053      	str	r3, [r2, #4]
-    RTC->DR |= ptrRtcHandler->RTC_Wdu<< RTC_DR_WDU_Pos;
 
     /*El sistema por defecto tiene la fecha del año 2000, de este modo se resta 2000 al valor del handler
      * y se realiza la separacion de decenas y unidades porque los años se encuentran en formato BCD.
      */
+    RTC->DR |= ((ptrRtcHandler->RTC_Years -2000)%10) << RTC_DR_YU_Pos;
  8003218:	4b20      	ldr	r3, [pc, #128]	; (800329c <rtc_Config+0x2a4>)
  800321a:	6858      	ldr	r0, [r3, #4]
  800321c:	687b      	ldr	r3, [r7, #4]
@@ -6578,7 +6578,7 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  800323c:	4a17      	ldr	r2, [pc, #92]	; (800329c <rtc_Config+0x2a4>)
  800323e:	4303      	orrs	r3, r0
  8003240:	6053      	str	r3, [r2, #4]
-    RTC->DR |= ((ptrRtcHandler->RTC_Years -2000)%10) << RTC_DR_YU_Pos;
+    RTC->DR |= (ptrRtcHandler->RTC_Years - 2000)/10 << RTC_DR_YT_Pos;
  8003242:	4b16      	ldr	r3, [pc, #88]	; (800329c <rtc_Config+0x2a4>)
  8003244:	685a      	ldr	r2, [r3, #4]
  8003246:	687b      	ldr	r3, [r7, #4]
@@ -6593,38 +6593,38 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  800325c:	490f      	ldr	r1, [pc, #60]	; (800329c <rtc_Config+0x2a4>)
  800325e:	4313      	orrs	r3, r2
  8003260:	604b      	str	r3, [r1, #4]
-    RTC->DR |= (ptrRtcHandler->RTC_Years - 2000)/10 << RTC_DR_YT_Pos;
 
     // Activamos nuevamente el real time clock
+    RCC->BDCR |= RCC_BDCR_RTCEN;
  8003262:	4b0c      	ldr	r3, [pc, #48]	; (8003294 <rtc_Config+0x29c>)
  8003264:	6f1b      	ldr	r3, [r3, #112]	; 0x70
  8003266:	4a0b      	ldr	r2, [pc, #44]	; (8003294 <rtc_Config+0x29c>)
  8003268:	f443 4300 	orr.w	r3, r3, #32768	; 0x8000
  800326c:	6713      	str	r3, [r2, #112]	; 0x70
-    RCC->BDCR |= RCC_BDCR_RTCEN;
 
     // Salimos del modo de inicializacion
+    RTC->ISR &= ~RTC_ISR_INIT;
  800326e:	4b0b      	ldr	r3, [pc, #44]	; (800329c <rtc_Config+0x2a4>)
  8003270:	68db      	ldr	r3, [r3, #12]
  8003272:	4a0a      	ldr	r2, [pc, #40]	; (800329c <rtc_Config+0x2a4>)
  8003274:	f023 0380 	bic.w	r3, r3, #128	; 0x80
  8003278:	60d3      	str	r3, [r2, #12]
-    RTC->ISR &= ~RTC_ISR_INIT;
 
     // Se habilita la proteccion de bits
+    PWR->CR &= ~ PWR_CR_DBP;
  800327a:	4b07      	ldr	r3, [pc, #28]	; (8003298 <rtc_Config+0x2a0>)
  800327c:	681b      	ldr	r3, [r3, #0]
  800327e:	4a06      	ldr	r2, [pc, #24]	; (8003298 <rtc_Config+0x2a0>)
  8003280:	f423 7380 	bic.w	r3, r3, #256	; 0x100
  8003284:	6013      	str	r3, [r2, #0]
-    PWR->CR &= ~ PWR_CR_DBP;
 
     // Se escribe una clave erronea para que write protection se bloquee
+    RTC->WPR = (0xFF);
  8003286:	4b05      	ldr	r3, [pc, #20]	; (800329c <rtc_Config+0x2a4>)
  8003288:	22ff      	movs	r2, #255	; 0xff
  800328a:	625a      	str	r2, [r3, #36]	; 0x24
-    RTC->WPR = (0xFF);
 
+}
  800328c:	bf00      	nop
  800328e:	370c      	adds	r7, #12
  8003290:	e00a      	b.n	80032a8 <rtc_Config+0x2b0>
@@ -6640,15 +6640,15 @@ void rtc_Config(RTC_Handler_t *ptrRtcHandler){
  80032ae:	bf00      	nop
 
 080032b0 <read_Time>:
-}
 
 // Funcion que entrega un puntero para almacenar los resultados en el arreglo Tiempo
+uint8_t* read_Time(void){
  80032b0:	b480      	push	{r7}
  80032b2:	af00      	add	r7, sp, #0
-uint8_t* read_Time(void){
 
 	//Extraemos el dato de los registros y los desplazamos a la primera posicion
 
+	RTC_UnidadesHoras = ((RTC->TR & RTC_TR_HU_Msk)>>RTC_TR_HU_Pos);
  80032b4:	4b36      	ldr	r3, [pc, #216]	; (8003390 <read_Time+0xe0>)
  80032b6:	681b      	ldr	r3, [r3, #0]
  80032b8:	0c1b      	lsrs	r3, r3, #16
@@ -6657,7 +6657,7 @@ uint8_t* read_Time(void){
  80032c0:	b2da      	uxtb	r2, r3
  80032c2:	4b34      	ldr	r3, [pc, #208]	; (8003394 <read_Time+0xe4>)
  80032c4:	701a      	strb	r2, [r3, #0]
-	RTC_UnidadesHoras = ((RTC->TR & RTC_TR_HU_Msk)>>RTC_TR_HU_Pos);
+	RTC_DecenasHoras = ((RTC->TR & RTC_TR_HT_Msk)>> RTC_TR_HT_Pos);
  80032c6:	4b32      	ldr	r3, [pc, #200]	; (8003390 <read_Time+0xe0>)
  80032c8:	681b      	ldr	r3, [r3, #0]
  80032ca:	0d1b      	lsrs	r3, r3, #20
@@ -6666,7 +6666,7 @@ uint8_t* read_Time(void){
  80032d2:	b2da      	uxtb	r2, r3
  80032d4:	4b30      	ldr	r3, [pc, #192]	; (8003398 <read_Time+0xe8>)
  80032d6:	701a      	strb	r2, [r3, #0]
-	RTC_DecenasHoras = ((RTC->TR & RTC_TR_HT_Msk)>> RTC_TR_HT_Pos);
+	RTC_UnidadesMinutos = ((RTC->TR & RTC_TR_MNU_Msk)>>RTC_TR_MNU_Pos);
  80032d8:	4b2d      	ldr	r3, [pc, #180]	; (8003390 <read_Time+0xe0>)
  80032da:	681b      	ldr	r3, [r3, #0]
  80032dc:	0a1b      	lsrs	r3, r3, #8
@@ -6675,7 +6675,7 @@ uint8_t* read_Time(void){
  80032e4:	b2da      	uxtb	r2, r3
  80032e6:	4b2d      	ldr	r3, [pc, #180]	; (800339c <read_Time+0xec>)
  80032e8:	701a      	strb	r2, [r3, #0]
-	RTC_UnidadesMinutos = ((RTC->TR & RTC_TR_MNU_Msk)>>RTC_TR_MNU_Pos);
+	RTC_DecenasMinutos = ((RTC->TR & RTC_TR_MNT_Msk)>>RTC_TR_MNT_Pos);
  80032ea:	4b29      	ldr	r3, [pc, #164]	; (8003390 <read_Time+0xe0>)
  80032ec:	681b      	ldr	r3, [r3, #0]
  80032ee:	0b1b      	lsrs	r3, r3, #12
@@ -6684,7 +6684,7 @@ uint8_t* read_Time(void){
  80032f6:	b2da      	uxtb	r2, r3
  80032f8:	4b29      	ldr	r3, [pc, #164]	; (80033a0 <read_Time+0xf0>)
  80032fa:	701a      	strb	r2, [r3, #0]
-	RTC_DecenasMinutos = ((RTC->TR & RTC_TR_MNT_Msk)>>RTC_TR_MNT_Pos);
+	RTC_UnidadesSegundos = ((RTC->TR & RTC_TR_SU_Msk)>>RTC_TR_SU_Pos);
  80032fc:	4b24      	ldr	r3, [pc, #144]	; (8003390 <read_Time+0xe0>)
  80032fe:	681b      	ldr	r3, [r3, #0]
  8003300:	b2db      	uxtb	r3, r3
@@ -6692,7 +6692,7 @@ uint8_t* read_Time(void){
  8003306:	b2da      	uxtb	r2, r3
  8003308:	4b26      	ldr	r3, [pc, #152]	; (80033a4 <read_Time+0xf4>)
  800330a:	701a      	strb	r2, [r3, #0]
-	RTC_UnidadesSegundos = ((RTC->TR & RTC_TR_SU_Msk)>>RTC_TR_SU_Pos);
+	RTC_DecenasSegundos = ((RTC->TR & RTC_TR_ST_Msk)>>RTC_TR_ST_Pos);
  800330c:	4b20      	ldr	r3, [pc, #128]	; (8003390 <read_Time+0xe0>)
  800330e:	681b      	ldr	r3, [r3, #0]
  8003310:	091b      	lsrs	r3, r3, #4
@@ -6701,7 +6701,7 @@ uint8_t* read_Time(void){
  8003318:	b2da      	uxtb	r2, r3
  800331a:	4b23      	ldr	r3, [pc, #140]	; (80033a8 <read_Time+0xf8>)
  800331c:	701a      	strb	r2, [r3, #0]
-	RTC_DecenasSegundos = ((RTC->TR & RTC_TR_ST_Msk)>>RTC_TR_ST_Pos);
+    RTC_AmPm = ((RTC->TR & RTC_TR_PM_Msk)>>RTC_TR_PM_Pos);
  800331e:	4b1c      	ldr	r3, [pc, #112]	; (8003390 <read_Time+0xe0>)
  8003320:	681b      	ldr	r3, [r3, #0]
  8003322:	0d9b      	lsrs	r3, r3, #22
@@ -6710,9 +6710,9 @@ uint8_t* read_Time(void){
  800332a:	b2da      	uxtb	r2, r3
  800332c:	4b1f      	ldr	r3, [pc, #124]	; (80033ac <read_Time+0xfc>)
  800332e:	701a      	strb	r2, [r3, #0]
-    RTC_AmPm = ((RTC->TR & RTC_TR_PM_Msk)>>RTC_TR_PM_Pos);
 
     //Se almacenan los datos en el arreglo
+    time[0] = (RTC_DecenasSegundos * 10) + RTC_UnidadesSegundos ;
  8003330:	4b1d      	ldr	r3, [pc, #116]	; (80033a8 <read_Time+0xf8>)
  8003332:	781b      	ldrb	r3, [r3, #0]
  8003334:	461a      	mov	r2, r3
@@ -6726,7 +6726,7 @@ uint8_t* read_Time(void){
  8003344:	b2da      	uxtb	r2, r3
  8003346:	4b1a      	ldr	r3, [pc, #104]	; (80033b0 <read_Time+0x100>)
  8003348:	701a      	strb	r2, [r3, #0]
-    time[0] = (RTC_DecenasSegundos * 10) + RTC_UnidadesSegundos ;
+    time[1] = (RTC_DecenasMinutos * 10) + RTC_UnidadesMinutos;
  800334a:	4b15      	ldr	r3, [pc, #84]	; (80033a0 <read_Time+0xf0>)
  800334c:	781b      	ldrb	r3, [r3, #0]
  800334e:	461a      	mov	r2, r3
@@ -6740,7 +6740,7 @@ uint8_t* read_Time(void){
  800335e:	b2da      	uxtb	r2, r3
  8003360:	4b13      	ldr	r3, [pc, #76]	; (80033b0 <read_Time+0x100>)
  8003362:	705a      	strb	r2, [r3, #1]
-    time[1] = (RTC_DecenasMinutos * 10) + RTC_UnidadesMinutos;
+    time[2] = (RTC_DecenasHoras * 10) +  RTC_UnidadesHoras;
  8003364:	4b0c      	ldr	r3, [pc, #48]	; (8003398 <read_Time+0xe8>)
  8003366:	781b      	ldrb	r3, [r3, #0]
  8003368:	461a      	mov	r2, r3
@@ -6754,15 +6754,15 @@ uint8_t* read_Time(void){
  8003378:	b2da      	uxtb	r2, r3
  800337a:	4b0d      	ldr	r3, [pc, #52]	; (80033b0 <read_Time+0x100>)
  800337c:	709a      	strb	r2, [r3, #2]
-    time[2] = (RTC_DecenasHoras * 10) +  RTC_UnidadesHoras;
+    time[3] = RTC_AmPm;
  800337e:	4b0b      	ldr	r3, [pc, #44]	; (80033ac <read_Time+0xfc>)
  8003380:	781a      	ldrb	r2, [r3, #0]
  8003382:	4b0b      	ldr	r3, [pc, #44]	; (80033b0 <read_Time+0x100>)
  8003384:	70da      	strb	r2, [r3, #3]
-    time[3] = RTC_AmPm;
 
- 8003386:	4b0a      	ldr	r3, [pc, #40]	; (80033b0 <read_Time+0x100>)
      return time;
+ 8003386:	4b0a      	ldr	r3, [pc, #40]	; (80033b0 <read_Time+0x100>)
+}
  8003388:	4618      	mov	r0, r3
  800338a:	46bd      	mov	sp, r7
  800338c:	bc80      	pop	{r7}
@@ -6778,15 +6778,15 @@ uint8_t* read_Time(void){
  80033b0:	20003cb8 	.word	0x20003cb8
 
 080033b4 <read_Date>:
-}
 
 // Funcion que entrega un puntero para almacenar los resultados en el arreglo Date
+uint8_t* read_Date(void){
  80033b4:	b480      	push	{r7}
  80033b6:	af00      	add	r7, sp, #0
-uint8_t* read_Date(void){
 
 	//Extraemos el dato de los registros y los desplazamos a la primera posicion
 
+	RTC_diaDecenas = ((RTC->DR & RTC_DR_DT_Msk)>> RTC_DR_DT_Pos);
  80033b8:	4b38      	ldr	r3, [pc, #224]	; (800349c <read_Date+0xe8>)
  80033ba:	685b      	ldr	r3, [r3, #4]
  80033bc:	091b      	lsrs	r3, r3, #4
@@ -6795,7 +6795,7 @@ uint8_t* read_Date(void){
  80033c4:	b2da      	uxtb	r2, r3
  80033c6:	4b36      	ldr	r3, [pc, #216]	; (80034a0 <read_Date+0xec>)
  80033c8:	701a      	strb	r2, [r3, #0]
-	RTC_diaDecenas = ((RTC->DR & RTC_DR_DT_Msk)>> RTC_DR_DT_Pos);
+    RTC_diaUnidades = ((RTC->DR & RTC_DR_DU_Msk)>>RTC_DR_DU_Pos);
  80033ca:	4b34      	ldr	r3, [pc, #208]	; (800349c <read_Date+0xe8>)
  80033cc:	685b      	ldr	r3, [r3, #4]
  80033ce:	b2db      	uxtb	r3, r3
@@ -6803,7 +6803,7 @@ uint8_t* read_Date(void){
  80033d4:	b2da      	uxtb	r2, r3
  80033d6:	4b33      	ldr	r3, [pc, #204]	; (80034a4 <read_Date+0xf0>)
  80033d8:	701a      	strb	r2, [r3, #0]
-    RTC_diaUnidades = ((RTC->DR & RTC_DR_DU_Msk)>>RTC_DR_DU_Pos);
+    RTC_añoUnidades = ((RTC->DR & RTC_DR_YU_Msk)>>RTC_DR_YU_Pos);
  80033da:	4b30      	ldr	r3, [pc, #192]	; (800349c <read_Date+0xe8>)
  80033dc:	685b      	ldr	r3, [r3, #4]
  80033de:	0c1b      	lsrs	r3, r3, #16
@@ -6812,7 +6812,7 @@ uint8_t* read_Date(void){
  80033e6:	b2da      	uxtb	r2, r3
  80033e8:	4b2f      	ldr	r3, [pc, #188]	; (80034a8 <read_Date+0xf4>)
  80033ea:	701a      	strb	r2, [r3, #0]
-    RTC_añoUnidades = ((RTC->DR & RTC_DR_YU_Msk)>>RTC_DR_YU_Pos);
+    RTC_añoDecenas = ((RTC->DR & RTC_DR_YT_Msk)>>RTC_DR_YT_Pos);
  80033ec:	4b2b      	ldr	r3, [pc, #172]	; (800349c <read_Date+0xe8>)
  80033ee:	685b      	ldr	r3, [r3, #4]
  80033f0:	0d1b      	lsrs	r3, r3, #20
@@ -6821,7 +6821,7 @@ uint8_t* read_Date(void){
  80033f8:	b2da      	uxtb	r2, r3
  80033fa:	4b2c      	ldr	r3, [pc, #176]	; (80034ac <read_Date+0xf8>)
  80033fc:	701a      	strb	r2, [r3, #0]
-    RTC_añoDecenas = ((RTC->DR & RTC_DR_YT_Msk)>>RTC_DR_YT_Pos);
+    RTC_mes = (((RTC->DR & RTC_DR_MT_Msk)>>RTC_DR_MT_Pos)*10) + (((RTC->DR & RTC_DR_MU_Msk)>>RTC_DR_MU_Pos)%10);
  80033fe:	4b27      	ldr	r3, [pc, #156]	; (800349c <read_Date+0xe8>)
  8003400:	685b      	ldr	r3, [r3, #4]
  8003402:	0b1b      	lsrs	r3, r3, #12
@@ -6850,7 +6850,7 @@ uint8_t* read_Date(void){
  8003436:	b2da      	uxtb	r2, r3
  8003438:	4b1e      	ldr	r3, [pc, #120]	; (80034b4 <read_Date+0x100>)
  800343a:	701a      	strb	r2, [r3, #0]
-    RTC_mes = (((RTC->DR & RTC_DR_MT_Msk)>>RTC_DR_MT_Pos)*10) + (((RTC->DR & RTC_DR_MU_Msk)>>RTC_DR_MU_Pos)%10);
+    RTC_wdu = (RTC->DR & RTC_DR_WDU_Msk)>>RTC_DR_WDU_Pos;
  800343c:	4b17      	ldr	r3, [pc, #92]	; (800349c <read_Date+0xe8>)
  800343e:	685b      	ldr	r3, [r3, #4]
  8003440:	0b5b      	lsrs	r3, r3, #13
@@ -6859,9 +6859,9 @@ uint8_t* read_Date(void){
  8003448:	b2da      	uxtb	r2, r3
  800344a:	4b1b      	ldr	r3, [pc, #108]	; (80034b8 <read_Date+0x104>)
  800344c:	701a      	strb	r2, [r3, #0]
-    RTC_wdu = (RTC->DR & RTC_DR_WDU_Msk)>>RTC_DR_WDU_Pos;
 
     // Se almacenan los datos en el arreglo
+    date[0] = (RTC_diaDecenas * 10) + RTC_diaUnidades;
  800344e:	4b14      	ldr	r3, [pc, #80]	; (80034a0 <read_Date+0xec>)
  8003450:	781b      	ldrb	r3, [r3, #0]
  8003452:	461a      	mov	r2, r3
@@ -6875,12 +6875,12 @@ uint8_t* read_Date(void){
  8003462:	b2da      	uxtb	r2, r3
  8003464:	4b15      	ldr	r3, [pc, #84]	; (80034bc <read_Date+0x108>)
  8003466:	701a      	strb	r2, [r3, #0]
-    date[0] = (RTC_diaDecenas * 10) + RTC_diaUnidades;
+    date[1] = RTC_mes;
  8003468:	4b12      	ldr	r3, [pc, #72]	; (80034b4 <read_Date+0x100>)
  800346a:	781a      	ldrb	r2, [r3, #0]
  800346c:	4b13      	ldr	r3, [pc, #76]	; (80034bc <read_Date+0x108>)
  800346e:	705a      	strb	r2, [r3, #1]
-    date[1] = RTC_mes;
+    date[2] = (RTC_añoDecenas * 10) + RTC_añoUnidades;
  8003470:	4b0e      	ldr	r3, [pc, #56]	; (80034ac <read_Date+0xf8>)
  8003472:	781b      	ldrb	r3, [r3, #0]
  8003474:	461a      	mov	r2, r3
@@ -6894,16 +6894,16 @@ uint8_t* read_Date(void){
  8003484:	b2da      	uxtb	r2, r3
  8003486:	4b0d      	ldr	r3, [pc, #52]	; (80034bc <read_Date+0x108>)
  8003488:	709a      	strb	r2, [r3, #2]
-    date[2] = (RTC_añoDecenas * 10) + RTC_añoUnidades;
+    date[3] = RTC_wdu;
  800348a:	4b0b      	ldr	r3, [pc, #44]	; (80034b8 <read_Date+0x104>)
  800348c:	781a      	ldrb	r2, [r3, #0]
  800348e:	4b0b      	ldr	r3, [pc, #44]	; (80034bc <read_Date+0x108>)
  8003490:	70da      	strb	r2, [r3, #3]
-    date[3] = RTC_wdu;
 
- 8003492:	4b0a      	ldr	r3, [pc, #40]	; (80034bc <read_Date+0x108>)
     return date;
+ 8003492:	4b0a      	ldr	r3, [pc, #40]	; (80034bc <read_Date+0x108>)
 
+}
  8003494:	4618      	mov	r0, r3
  8003496:	46bd      	mov	sp, r7
  8003498:	bc80      	pop	{r7}

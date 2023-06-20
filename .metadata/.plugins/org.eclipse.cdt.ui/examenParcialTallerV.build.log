@@ -1,4 +1,4 @@
-00:09:31 **** Incremental Build of configuration Debug for project examenParcialTallerV ****
+15:29:14 **** Build of configuration Debug for project examenParcialTallerV ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -18,5 +18,5 @@ arm-none-eabi-objdump -h -S  examenParcialTallerV.elf  > "examenParcialTallerV.l
 Finished building: examenParcialTallerV.list
  
 
-00:09:31 Build Finished. 0 errors, 0 warnings. (took 431ms)
+15:29:14 Build Finished. 0 errors, 0 warnings. (took 364ms)
 

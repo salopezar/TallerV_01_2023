@@ -1,7 +1,7 @@
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/arch=x86_64
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/name=Local
 LaunchTargetManager/org.eclipse.launchbar.core.launchTargetType.local,Local/os=linux
-configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:examenParcialTallerV Debug
+configDescList=org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:examenParcialTallerV Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:solucionTarea4Especial Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:testPeripheral Debug,org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:pruebaJoystick Debug
 eclipse.preferences.version=1
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:SolucionTarea2\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:SolucionTarea2\ Debug/activeLaunchTarget=null\:---
@@ -10,6 +10,7 @@ org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:Taller_4_semana\ Debug/activeLa
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:examenParcialTallerV\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:examenParcialTallerV\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:periferico_EXTI/activeLaunchMode=debug
+org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:pruebaJoystick\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:prueba_updateGPIO\ Debug/activeLaunchMode=run
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:prueba_updateGPIO\ Debug/activeLaunchTarget=null\:---
 org.eclipse.cdt.dsf.gdb.gdbRemotedescriptorType\:solucionTarea3\ Debug/activeLaunchMode=debug
