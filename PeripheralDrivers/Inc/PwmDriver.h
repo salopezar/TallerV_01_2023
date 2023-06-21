@@ -41,6 +41,7 @@ void updateFrequency(PWM_Handler_t *ptrPwmHandler, uint16_t newFreq);
 void setDuttyCycle(PWM_Handler_t *ptrPwmHandler);
 void updateDuttyCycle(PWM_Handler_t *ptrPwmHandler, uint16_t newDutty);
 void enableOutput(PWM_Handler_t *ptrPwmHandler);
+void offOutput(PWM_Handler_t *ptrPwmHandler);
 void startPwmSignal(PWM_Handler_t *ptrPwmHandler);
 void stopPwmSignal(PWM_Handler_t *ptrPwmHandler);
 

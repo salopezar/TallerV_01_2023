@@ -148,6 +148,40 @@ void enableOutput(PWM_Handler_t *ptrPwmHandler) {
 	}
 }
 
+void offOutput(PWM_Handler_t *ptrPwmHandler) {
+	switch (ptrPwmHandler->config.channel) {
+	case PWM_CHANNEL_1: {
+		// Activamos la salida del canal 1
+		ptrPwmHandler->ptrTIMx->CCER &= ~TIM_CCER_CC1E;
+		break;
+	}
+
+	case PWM_CHANNEL_2: {
+		// Activamos la salida del canal 2
+		ptrPwmHandler->ptrTIMx->CCER &= ~TIM_CCER_CC2E;
+		break;
+	}
+
+	case PWM_CHANNEL_3: {
+		// Activamos la salida del canal 2
+		ptrPwmHandler->ptrTIMx->CCER &= ~TIM_CCER_CC3E;
+
+		break;
+	}
+
+	case PWM_CHANNEL_4: {
+		// Activamos la salida del canal 2
+		ptrPwmHandler->ptrTIMx->CCER &= ~TIM_CCER_CC4E;
+
+		break;
+	}
+
+	default: {
+		break;
+	}
+	}
+}
+
 /*
  * La frecuencia es definida por el conjunto formado por el preescaler (PSC)
  * y el valor límite al que llega el Timer (ARR), con estos dos se establece
