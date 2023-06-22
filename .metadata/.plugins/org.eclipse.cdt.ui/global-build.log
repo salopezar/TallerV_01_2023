@@ -1,194 +1,4 @@
-15:19:31 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-15:19:35 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-15:21:09 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-15:23:05 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:02:44 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:03:55 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:15:35 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:16:17 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:18:44 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:22:34 **** Incremental Build of configuration Debug for project pruebaJoystick ****
-make clean all 
-rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
-rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
-rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
- 
-arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
-arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
-arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: pruebaJoystick.elf
- 
-arm-none-eabi-size   pruebaJoystick.elf 
-   text	   data	    bss	    dec	    hex	filename
-  31020	    544	   2168	  33732	   83c4	pruebaJoystick.elf
-Finished building: default.size.stdout
- 
-arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
-Finished building: pruebaJoystick.list
- 
-16:24:26 **** Incremental Build of configuration Debug for project pruebaJoystick ****
+17:36:07 **** Incremental Build of configuration Debug for project pruebaJoystick ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -202,6 +12,44 @@ Finished building target: pruebaJoystick.elf
 arm-none-eabi-size   pruebaJoystick.elf 
    text	   data	    bss	    dec	    hex	filename
   30972	    544	   2168	  33684	   8394	pruebaJoystick.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
+Finished building: pruebaJoystick.list
+ 
+17:36:12 **** Incremental Build of configuration Debug for project pruebaJoystick ****
+make clean all 
+rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
+rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
+rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
+ 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
+arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
+arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: pruebaJoystick.elf
+ 
+arm-none-eabi-size   pruebaJoystick.elf 
+   text	   data	    bss	    dec	    hex	filename
+  30972	    544	   2168	  33684	   8394	pruebaJoystick.elf
+Finished building: default.size.stdout
+ 
+arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
+Finished building: pruebaJoystick.list
+ 
+17:37:19 **** Incremental Build of configuration Debug for project pruebaJoystick ****
+make clean all 
+rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
+rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
+rm -rf default.size.stdout pruebaJoystick.elf pruebaJoystick.list pruebaJoystick.map
+ 
+arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -x assembler-with-cpp -MMD -MP -MF"Core/Startup/startup_stm32f411retx.d" -MT"Core/Startup/startup_stm32f411retx.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Startup/startup_stm32f411retx.o" "../Core/Startup/startup_stm32f411retx.s"
+arm-none-eabi-gcc "../App/Src/main.c" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DNUCLEO_F411RE -DSTM32 -DSTM32F4 -DSTM32F411RETx -DSTM32F411xE -c -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/App/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Inc" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Include" -I"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/Core/Device/ST/STM32F4xx/Include" -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"App/Src/main.d" -MT"App/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "App/Src/main.o"
+arm-none-eabi-gcc -o "pruebaJoystick.elf" @"objects.list"  -lPeripheralDrivers -mcpu=cortex-m4 -T"/home/santiago/Documentos/GitHub/TallerV_01_2023/pruebaJoystick/STM32F411RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="pruebaJoystick.map" -Wl,--gc-sections -static -L"/home/santiago/Documentos/GitHub/TallerV_01_2023/PeripheralDrivers/Debug" --specs=nano.specs -mfloat-abi=soft -mthumb -u _printf_float -u _scanf_float -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: pruebaJoystick.elf
+ 
+arm-none-eabi-size   pruebaJoystick.elf 
+   text	   data	    bss	    dec	    hex	filename
+  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"

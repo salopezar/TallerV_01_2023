@@ -1,2 +1,3 @@
-data
-dataADCChannel2
+dataADCChannel0[0]
+dataADCChannel1[0]
+dataADCChannel2[0]

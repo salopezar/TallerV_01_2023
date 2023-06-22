@@ -524,21 +524,28 @@ void adcMultiChannel(ADC_Config_t *adcConfig, uint8_t numberOfConversion){
 
 	/* 7. Acá se debería configurar el sampling...*/
 
+
+
 	for(counter5 = 0; counter5 < numberOfConversion; counter5++){
 		if (adcConfig->adcMultiChannel[counter5] <= ADC_CHANNEL_9) {
+			ADC1->SMPR2 &= ~(0b111 << (3 * (adcConfig->adcMultiChannel[counter5])));
 			// Acá se establecen la cantidad de ciclos para cada canal (0 al 9)
 			ADC1->SMPR2 |= (adcConfig->samplingPeriod << (3 * (adcConfig->adcMultiChannel[counter5])));
 
 		} else {
+			ADC1->SMPR1 &= ~(0b111 << (3 * (adcConfig->adcMultiChannel[counter5] - 10)));
 			// Acá se establecen la cantidad de ciclos para cada canal (10 al 18)
 			ADC1->SMPR1 |= (adcConfig->samplingPeriod << (3 * (adcConfig->adcMultiChannel[counter5] - 10)));
 
 		}
 	}
+	ADC1->SQR1 = 0;
+	ADC1->SQR2 = 0;
+	ADC1->SQR3 = 0;
 
 	/* 8. Configuramos la secuencia y cuantos elementos hay en la secuencia */
 	// Al hacerlo todo 0, estamos seleccionando solo 1 elemento en el conteo de la secuencia
-	ADC1->SQR1 = (numberOfConversion - 1) << ADC_SQR1_L_Pos;
+	ADC1->SQR1 |= (numberOfConversion - 1) << ADC_SQR1_L_Pos;
 
 	// Asignamos el orden de la conversión dependiendo del canal en que
 	// se esté haciendo, de allí la variación en la agrupación de los
@@ -556,7 +563,7 @@ void adcMultiChannel(ADC_Config_t *adcConfig, uint8_t numberOfConversion){
 	}
 
 	/* 9. Configuramos el preescaler del ADC en 2:1 (el mas rápido que se puede tener */
-	ADC->CCR |= ADC_CCR_ADCPRE_0;
+	ADC->CCR &= ~ADC_CCR_ADCPRE;
 
 	/* 10. Desactivamos las interrupciones globales */
 	__disable_irq();
@@ -568,7 +575,7 @@ void adcMultiChannel(ADC_Config_t *adcConfig, uint8_t numberOfConversion){
 	__NVIC_EnableIRQ(ADC_IRQn);
 
 	/* 11b. Configuramos la prioridad para la interrupción ADC */
-	__NVIC_SetPriority(ADC_IRQn, 1);
+	__NVIC_SetPriority(ADC_IRQn, 4);
 
 	/* 12. Activamos el modulo ADC */
 	ADC1->CR2 |= ADC_CR2_ADON;

@@ -73,7 +73,7 @@ uint16_t dataADC[1] = {0};
 char buffer[64] = {0};
 uint8_t cont = 0;
 // Number of convertions son la cantidad de canales ADC que se necesitan.
-uint8_t numberOfConversion = 3;
+uint8_t numberOfConversion = 2;
 uint16_t cont2 = 0;
 unsigned int   dataADCChannel0[1];
 unsigned int   dataADCChannel1[1];
@@ -94,16 +94,12 @@ int main(void){
 	/* inicialización de todos los elementos del sistema */
 	initHardware();
 	writeMsg(&USART2Comm, bufferData);
-	/* Loop infsprintf(buffer, "Luxometro = %u \n", dataADCChannel2[0]);
-//			writeMsg(&USART2Comm, buffer);inito */
+	/* Loop infinito */
 	while(1){
 		pwmSignalSwitch();
 		if(flagADC){
-			sprintf(buffer, "Channel X = %u , Channel Y = %u \n", dataADCChannel0[0], dataADCChannel1[0]);
+			sprintf(buffer, "Channel X = %u , Channel Y = %u, Channel Z = %u \n", dataADCChannel0[0], dataADCChannel1[0], dataADCChannel2[0]);
 			writeMsg(&USART2Comm, buffer);
-
-//			sprintf(buffer, "Luxometro = %u \n", dataADCChannel2[0]);
-//			writeMsg(&USART2Comm, buffer);
 			rxData = 0;
 			flagADC = 0;
 		}
@@ -170,7 +166,7 @@ void initHardware(void){
 	adcConfig.AdcChannelEvent		= TIM5_CH3;
 	adcConfig.adcMultiChannel[0] 	= ADC_CHANNEL_1;
 	adcConfig.adcMultiChannel[1]	= ADC_CHANNEL_4;
-	adcConfig.adcMultiChannel[2]	= ADC_CHANNEL_5;
+	adcConfig.adcMultiChannel[2]	= ADC_CHANNEL_0;
 	adcMultiChannel(&adcConfig, 3);
 	adcConfigEvents(&adcConfig);
 
