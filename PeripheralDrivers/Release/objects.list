@@ -5,6 +5,7 @@
 "./Src/LCDDriver.o"
 "./Src/PLLDriver.o"
 "./Src/PwmDriver.o"
+"./Src/RTCDriver.o"
 "./Src/SysTickDriver.o"
 "./Src/USARTxDriver.o"
 "./Src/adcDriver.o"

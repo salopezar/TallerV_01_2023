@@ -1,10 +1,3 @@
-/*
- * PwmDriver.h
- *
- *  Created on: 19/05/2023
- *      Author: santiago
- */
-
 #ifndef PWMDRIVER_H_
 #define PWMDRIVER_H_
 
@@ -18,6 +11,9 @@
 #define PWM_DUTTY_0_PERCENT		0
 #define PWM_DUTTY_100_PERCENT	100
 
+#define PWM_POLARITY_ACTIVE_HIGH	0
+#define PWM_POLARITY_ACTIVE_LOW		1
+
 /**/
 typedef struct
 {
@@ -25,6 +21,7 @@ typedef struct
 	uint32_t	prescaler;		// A qué velocidad se incrementa el Timer
 	uint16_t	periodo;		// Indica el número de veces que el Timer se incrementa, el periodo de la frecuencia viene dado por Time_Fosc * PSC * ARR
 	uint16_t	duttyCicle;		// Valor en porcentaje (%) del tiempo que la señal está en alto
+	uint8_t 	polarity;
 }PWM_Config_t;
 
 /**/
@@ -44,5 +41,6 @@ void enableOutput(PWM_Handler_t *ptrPwmHandler);
 void offOutput(PWM_Handler_t *ptrPwmHandler);
 void startPwmSignal(PWM_Handler_t *ptrPwmHandler);
 void stopPwmSignal(PWM_Handler_t *ptrPwmHandler);
+void setPolarity(PWM_Handler_t *ptrPwmHandler);
 
 #endif /* PWMDRIVER_H_ */

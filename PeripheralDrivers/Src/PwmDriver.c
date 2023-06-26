@@ -100,7 +100,9 @@ void pwm_Config(PWM_Handler_t *ptrPwmHandler){
 	/* 6. Activamos la salida seleccionada */
 	enableOutput(ptrPwmHandler);
 
+
 	}// fin del switch-case
+	setPolarity(ptrPwmHandler);
 }
 
 /* Función para activar el Timer y activar todo el módulo PWM */
@@ -252,3 +254,86 @@ void updateDuttyCycle(PWM_Handler_t *ptrPwmHandler, uint16_t newDutty){
 	setDuttyCycle(ptrPwmHandler);
 }
 
+void setPolarity(PWM_Handler_t *ptrPwmHandler){
+
+	if(ptrPwmHandler->config.polarity == PWM_POLARITY_ACTIVE_LOW){
+		//Estamos en active low por ende debemos configurar el canal
+		//segun esta polaridad
+
+		switch (ptrPwmHandler->config.channel) {
+
+			case PWM_CHANNEL_1: {
+				// Configuramos la polaridad del canal 1
+				ptrPwmHandler->ptrTIMx->CCER |= TIM_CCER_CC1P_Msk;
+
+				break;
+			}
+
+			case PWM_CHANNEL_2: {
+				// Configuramos la polaridad del canal 2
+				ptrPwmHandler->ptrTIMx->CCER  |= TIM_CCER_CC2P_Msk;
+
+				break;
+			}
+
+			case PWM_CHANNEL_3: {
+				// Configuramos la polaridad del canal 3
+				ptrPwmHandler->ptrTIMx->CCER  |= TIM_CCER_CC3P_Msk;
+
+				break;
+			}
+
+			case PWM_CHANNEL_4: {
+				// Configuramos la polaridad del canal 4
+				ptrPwmHandler->ptrTIMx->CCER  |= TIM_CCER_CC4P_Msk;
+
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}//Fin del switch case
+	}
+
+	else {
+		//Estamos en active high por ende debemos configurar el canal
+		//segun esta polaridad. Este sera nuestra polaridad por defecto
+
+		switch (ptrPwmHandler->config.channel) {
+
+			case PWM_CHANNEL_1: {
+				// Configuramos la polaridad del canal 1
+				ptrPwmHandler->ptrTIMx->CCER &= ~TIM_CCER_CC1P_Msk;
+
+				break;
+			}
+
+			case PWM_CHANNEL_2: {
+				// Configuramos la polaridad del canal 2
+				ptrPwmHandler->ptrTIMx->CCER  &= ~TIM_CCER_CC2P_Msk;
+
+				break;
+			}
+
+			case PWM_CHANNEL_3: {
+				// Configuramos la polaridad del canal 3
+				ptrPwmHandler->ptrTIMx->CCER  &= ~TIM_CCER_CC3P_Msk;
+
+				break;
+			}
+
+			case PWM_CHANNEL_4: {
+				// Configuramos la polaridad del canal 4
+				ptrPwmHandler->ptrTIMx->CCER  &= ~TIM_CCER_CC4P_Msk;
+
+				break;
+			}
+
+			default: {
+				break;
+			}
+		}//Fin del switch case
+	}
+
+}

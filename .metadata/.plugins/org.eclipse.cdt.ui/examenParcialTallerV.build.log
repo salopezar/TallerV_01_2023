@@ -1,4 +1,4 @@
-15:29:14 **** Build of configuration Debug for project examenParcialTallerV ****
+00:21:12 **** Incremental Build of configuration Debug for project examenParcialTallerV ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -11,12 +11,12 @@ Finished building target: examenParcialTallerV.elf
  
 arm-none-eabi-size   examenParcialTallerV.elf 
    text	   data	    bss	    dec	    hex	filename
-  44648	    544	  16608	  61800	   f168	examenParcialTallerV.elf
+  44992	    544	  16616	  62152	   f2c8	examenParcialTallerV.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  examenParcialTallerV.elf  > "examenParcialTallerV.list"
 Finished building: examenParcialTallerV.list
  
 
-15:29:14 Build Finished. 0 errors, 0 warnings. (took 364ms)
+00:21:13 Build Finished. 0 errors, 0 warnings. (took 414ms)
 

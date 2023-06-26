@@ -1,0 +1,512 @@
+/**
+ ******************************************************************************
+ * @file           : main.c
+ * @author         : SANTIAGO LÓPEZ ARANZAZU - CC. 1007429871
+ * @e-mail         : salopezar@unal.edu.co
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
+
+
+
+/* Cabeceras de las librerías */
+#include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
+#include <math.h>
+#include "stm32f4xx.h"
+#include <string.h>
+
+
+/* Cabeceras de los drivers */
+#include "ExtiDriver.h"
+#include "GPIOxDriver.h"
+#include "PLLDriver.h"
+#include "BasicTimer.h"
+#include "USARTxDriver.h"
+#include "adcDriver.h"
+#include "PwmDriver.h"
+#include "I2CDriver.h"
+#include "RTCDriver.h"
+
+// Definición de los handlers GPIO necesarios.
+GPIO_Handler_t handlerStateLED				= {0};
+GPIO_Handler_t handlerUSARTPINTX			= {0};
+GPIO_Handler_t handlerUSARTPINRX			= {0};
+GPIO_Handler_t HandlerTIM5PWM_1             = {0};
+GPIO_Handler_t HandlerTIM3PWM_2 			= {0};
+GPIO_Handler_t HandlerTIM3PWM_3				= {0};
+GPIO_Handler_t HandlerTIM3PWM_4				= {0};
+GPIO_Handler_t HandlerTIM4PWM_5        		= {0};
+GPIO_Handler_t HandlerTIM4PWM_6				= {0};
+GPIO_Handler_t HandlerTIM4PWM_7				= {0};
+GPIO_Handler_t HandlerTIM4PWM_8        		= {0};
+GPIO_Handler_t HandlerTIM2PWM_9        		= {0};
+// Definimos los basic timer del blinky y de las banderas.
+BasicTimer_Handler_t handlerBlinkyTimer 	= {0};
+BasicTimer_Handler_t handlerTimer4			= {0};
+// Para la conversión ADC.
+ADC_Config_t adcConfig = {0};
+// Se define el handler de la comunicacion serial para el USART 6 que me corresponde.
+USART_Handler_t USART2Comm = {0};
+PWM_Handler_t handlerPWMprueba = {0};
+PWM_Handler_t handlerPWM_1 = {0};
+PWM_Handler_t handlerPWM_2 = {0};
+PWM_Handler_t handlerPWM_3 = {0};
+PWM_Handler_t handlerPWM_4 = {0};
+PWM_Handler_t handlerPWM_5 = {0};
+PWM_Handler_t handlerPWM_6 = {0};
+PWM_Handler_t handlerPWM_7 = {0};
+PWM_Handler_t handlerPWM_8 = {0};
+PWM_Handler_t handlerPWM_9 = {0};
+// PARA LA CONVERSIÓN ADC: los variables y los arreglos necesarios.
+uint8_t adcIsComplete = 0;
+uint16_t dataADC[1] = {0};
+char buffer[64] = {0};
+uint8_t cont = 0;
+// Number of convertions son la cantidad de canales ADC que se necesitan.
+uint8_t numberOfConversion = 2;
+uint16_t cont2 = 0;
+unsigned int   dataADCChannel0[1];
+unsigned int   dataADCChannel1[1];
+unsigned int   dataADCChannel2[1];
+uint8_t flag = 0;
+uint8_t flag2 = 0;
+char rxData = 0;
+char bufferData[64] = "JoyStick testing...";
+//Definición de las cabeceras de las funciones del main
+void initHardware(void);
+void duttyCicleReturn(void);
+void pwmSignalSwitch(void);
+uint16_t flagADC = {0};
+uint16_t counterADC = {0};
+uint32_t duttyLux = {0};
+/* Función principal del programa */
+int main(void){
+
+	/* inicialización de todos los elementos del sistema */
+	initHardware();
+	writeMsg(&USART2Comm, bufferData);
+	/* Loop infinito */
+	while(1){
+		pwmSignalSwitch();
+		duttyCicleReturn();
+		if(flagADC){
+			sprintf(buffer, "Channel X = %u , Channel Y = %u, Channel Z = %u \n", dataADCChannel0[0], dataADCChannel1[0], dataADCChannel2[0]);
+			writeMsg(&USART2Comm, buffer);
+			rxData = 0;
+			flagADC = 0;
+		}
+
+	}
+	return 0;
+}// Final del main
+
+// Función donde se configuran los pimsgToSendnes en general.
+void initHardware(void){
+
+	// Se desactiva el reloj HSE porque PH0 está conectado a un oscilador HSE.
+	RCC->CR &= ~(RCC_CR_HSEON);
+
+	handlerStateLED.pGPIOx                               	= GPIOH;
+	handlerStateLED.GPIO_PinConfig.GPIO_PinNumber 			= PIN_1;
+	handlerStateLED.GPIO_PinConfig.GPIO_PinMode 			= GPIO_MODE_OUT;
+	handlerStateLED.GPIO_PinConfig.GPIO_PinOPType 			= GPIO_OTYPE_PUSHPULL;
+	handlerStateLED.GPIO_PinConfig.GPIO_PinSpeed 			= GPIO_OSPEED_FAST;
+	handlerStateLED.GPIO_PinConfig.GPIO_PinPuPdControl 		= GPIO_PUPDR_NOTHING;
+	GPIO_Config(&handlerStateLED);
+
+	/* Configuración del TIM2 para que haga un blinky cada 250 ms */
+	handlerBlinkyTimer.ptrTIMx 								= TIM2;
+	handlerBlinkyTimer.TIMx_Config.TIMx_mode 				= BTIMER_MODE_UP;
+	handlerBlinkyTimer.TIMx_Config.TIMx_speed				= BTIMER_SPEED_1ms;
+	handlerBlinkyTimer.TIMx_Config.TIMx_period 				= 250;
+	handlerBlinkyTimer.TIMx_Config.TIMx_interruptEnable 	= BTIMER_INTERRUPT_ENABLE;
+	BasicTimer_Config(&handlerBlinkyTimer);
+
+	/* Configuración del USART */
+	// Transmisión
+	handlerUSARTPINTX.pGPIOx  							= GPIOA;
+	handlerUSARTPINTX.GPIO_PinConfig.GPIO_PinNumber 	= PIN_2;
+	handlerUSARTPINTX.GPIO_PinConfig.GPIO_PinMode 		= GPIO_MODE_ALTFN;
+	handlerUSARTPINTX.GPIO_PinConfig.GPIO_PinAltFunMode = AF7;
+	GPIO_Config(&handlerUSARTPINTX);
+
+	// Recepción
+	handlerUSARTPINRX.pGPIOx 						 	= GPIOA;
+	handlerUSARTPINRX.GPIO_PinConfig.GPIO_PinNumber		= PIN_3;
+	handlerUSARTPINRX.GPIO_PinConfig.GPIO_PinMode 		= GPIO_MODE_ALTFN;
+	handlerUSARTPINRX.GPIO_PinConfig.GPIO_PinAltFunMode = AF7;
+	GPIO_Config(&handlerUSARTPINRX);
+
+	// Para el USART 6
+	USART2Comm.ptrUSARTx 					= USART2;
+	USART2Comm.USART_Config.USART_baudrate 	= USART_BAUDRATE_115200;
+	USART2Comm.USART_Config.USART_datasize 	= USART_DATASIZE_8BIT;
+	USART2Comm.USART_Config.USART_parity 	= USART_PARITY_NONE;
+	USART2Comm.USART_Config.USART_mode 		= USART_MODE_RXTX;
+	USART2Comm.USART_Config.USART_stopbits 	= USART_STOPBIT_1;
+	USART2Comm.USART_Config.USART_enableIntRX = USART_RX_INTERRUP_ENABLE;
+
+	// Se carga lo hecho sobre el USART
+	USART_Config(&USART2Comm);
+
+	/* Configuración ADC */
+	// Cargando la configuración para la conversación ADC
+	adcConfig.dataAlignment			= ADC_ALIGNMENT_RIGHT;
+	adcConfig.resolution			= ADC_RESOLUTION_12_BIT;
+	adcConfig.samplingPeriod		= ADC_SAMPLING_PERIOD_28_CYCLES;
+	adcConfig.AdcEventType			= TIMER_ADC_EVENT;
+	adcConfig.AdcChannelEvent		= TIM5_CH3;
+	adcConfig.adcMultiChannel[0] 	= ADC_CHANNEL_1;
+	adcConfig.adcMultiChannel[1]	= ADC_CHANNEL_4;
+	adcConfig.adcMultiChannel[2]	= ADC_CHANNEL_0;
+	adcMultiChannel(&adcConfig, 3);
+	adcConfigEvents(&adcConfig);
+
+	// handler PWM
+	handlerPWMprueba.ptrTIMx           	  =   TIM5;
+	handlerPWMprueba.config.channel       =   PWM_CHANNEL_3;
+	handlerPWMprueba.config.duttyCicle    =   10000;
+	handlerPWMprueba.config.periodo       =   20000;
+	handlerPWMprueba.config.prescaler     =   16;
+	pwm_Config(&handlerPWMprueba);
+	enableOutput(&handlerPWMprueba);
+	startPwmSignal(&handlerPWMprueba);
+
+	// GPIO TIM 3 CC4
+	HandlerTIM5PWM_1.pGPIOx          					= GPIOB;
+	HandlerTIM5PWM_1.GPIO_PinConfig.GPIO_PinNumber  	= PIN_1;
+	HandlerTIM5PWM_1.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM5PWM_1.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM5PWM_1.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM5PWM_1.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM5PWM_1.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM5PWM_1);
+	// Izquierda
+	handlerPWM_1.ptrTIMx           	  =   TIM3;
+	handlerPWM_1.config.channel       =   PWM_CHANNEL_4;
+	handlerPWM_1.config.duttyCicle    =   10000;
+	handlerPWM_1.config.periodo       =   25000;
+	handlerPWM_1.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_1);
+
+	// GPIO TIM 3 CC3
+	HandlerTIM3PWM_2.pGPIOx          					= GPIOB;
+	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinNumber  	= PIN_0;
+	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+	GPIO_WritePin(&HandlerTIM3PWM_2, 0);
+	GPIO_Config(&HandlerTIM3PWM_2);
+	// Derecha
+	handlerPWM_2.ptrTIMx           	  =   TIM3;
+	handlerPWM_2.config.channel       =   PWM_CHANNEL_3;
+	handlerPWM_2.config.duttyCicle    =   10000;
+	handlerPWM_2.config.periodo       =   25000;
+	handlerPWM_2.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_2);
+
+	// GPIO TIM 3 CC1
+	HandlerTIM3PWM_3.pGPIOx          					= GPIOA;
+	HandlerTIM3PWM_3.GPIO_PinConfig.GPIO_PinNumber  	= PIN_6;
+	HandlerTIM3PWM_3.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM3PWM_3.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM3PWM_3.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM3PWM_3.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM3PWM_3.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM3PWM_3);
+	// Arriba
+	handlerPWM_3.ptrTIMx           	  =   TIM3;
+	handlerPWM_3.config.channel       =   PWM_CHANNEL_1;
+	handlerPWM_3.config.duttyCicle    =   10000;
+	handlerPWM_3.config.periodo       =   25000;
+	handlerPWM_3.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_3);
+
+	// GPIO TIM 3 CC2
+	HandlerTIM3PWM_4.pGPIOx          					= GPIOA;
+	HandlerTIM3PWM_4.GPIO_PinConfig.GPIO_PinNumber  	= PIN_7;
+	HandlerTIM3PWM_4.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM3PWM_4.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM3PWM_4.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM3PWM_4.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM3PWM_4.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM3PWM_4);
+	// Abajo
+	handlerPWM_4.ptrTIMx           	  =   TIM3;
+	handlerPWM_4.config.channel       =   PWM_CHANNEL_2;
+	handlerPWM_4.config.duttyCicle    =   10000;
+	handlerPWM_4.config.periodo       =   25000;
+	handlerPWM_4.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_4);
+
+	// GPIO TIM 4 CC1
+	HandlerTIM4PWM_5.pGPIOx          					= GPIOB;
+	HandlerTIM4PWM_5.GPIO_PinConfig.GPIO_PinNumber  	= PIN_6;
+	HandlerTIM4PWM_5.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM4PWM_5.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM4PWM_5.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM4PWM_5.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM4PWM_5.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM4PWM_5);
+	// DIAGONAL X
+	handlerPWM_5.ptrTIMx           	  =   TIM4;
+	handlerPWM_5.config.channel       =   PWM_CHANNEL_1;
+	handlerPWM_5.config.duttyCicle    =   10000;
+	handlerPWM_5.config.periodo       =   25000;
+	handlerPWM_5.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_5);
+
+	// GPIO TIM 4 CC2
+	HandlerTIM4PWM_6.pGPIOx          					= GPIOB;
+	HandlerTIM4PWM_6.GPIO_PinConfig.GPIO_PinNumber  	= PIN_7;
+	HandlerTIM4PWM_6.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM4PWM_6.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM4PWM_6.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM4PWM_6.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM4PWM_6.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM4PWM_6);
+	// DIAGONAL Y
+	handlerPWM_6.ptrTIMx           	  =   TIM4;
+	handlerPWM_6.config.channel       =   PWM_CHANNEL_2;
+	handlerPWM_6.config.duttyCicle    =   10000;
+	handlerPWM_6.config.periodo       =   25000;
+	handlerPWM_6.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_6);
+
+	// GPIO TIM 4 CC3
+	HandlerTIM4PWM_7.pGPIOx          					= GPIOB;
+	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinNumber  	= PIN_8;
+	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM4PWM_7);
+	// DIAGONAL Y
+	handlerPWM_7.ptrTIMx           	  =   TIM4;
+	handlerPWM_7.config.channel       =   PWM_CHANNEL_3;
+	handlerPWM_7.config.duttyCicle    =   10000;
+	handlerPWM_7.config.periodo       =   25000;
+	handlerPWM_7.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_7);
+
+	// GPIO TIM 4 CC4
+	HandlerTIM4PWM_8.pGPIOx          					= GPIOB;
+	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinNumber  	= PIN_9;
+	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
+
+	GPIO_Config(&HandlerTIM4PWM_8);
+	// DIAGONAL Y
+	handlerPWM_8.ptrTIMx           	  =   TIM4;
+	handlerPWM_8.config.channel       =   PWM_CHANNEL_4;
+	handlerPWM_8.config.duttyCicle    =   10000;
+	handlerPWM_8.config.periodo       =   25000;
+	handlerPWM_8.config.prescaler     =   160;
+	pwm_Config(&handlerPWM_8);
+
+//	// GPIO TIM 4 CC4
+//	HandlerTIM2PWM_9.pGPIOx          					= GPIOA;
+//	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinNumber  	= PIN_0;
+//	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinMode    	= GPIO_MODE_ALTFN;
+//	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinOPType  	= GPIO_OTYPE_PUSHPULL;
+//	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
+//	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
+//	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinAltFunMode  = AF1;
+//
+//	GPIO_Config(&HandlerTIM2PWM_9);
+//	// DIAGONAL Y
+//	handlerPWM_9.ptrTIMx           	  =   TIM2;
+//	handlerPWM_9.config.channel       =   PWM_CHANNEL_1;
+//	handlerPWM_9.config.duttyCicle    =   10000;
+//	handlerPWM_9.config.periodo       =   20000;
+//	handlerPWM_9.config.prescaler     =   16;
+//	pwm_Config(&handlerPWM_9);
+
+
+} // Fin initHardware
+
+void duttyCicleReturn(void){
+	if(dataADCChannel2[0] >= 0 && dataADCChannel2[0] <= 250){
+		duttyLux = 1000;
+	}else if(dataADCChannel2[0] > 500 && dataADCChannel2[0] <= 1500){
+		duttyLux = 12500;
+	}else if(dataADCChannel2[0] > 1500 && dataADCChannel2[0] <= 2000){
+		duttyLux = 17500;
+	}else if(dataADCChannel2[0] > 2000 && dataADCChannel2[0] <= 3000){
+		duttyLux = 21000;
+	}else{
+		duttyLux = 21500;
+	}
+}
+
+void pwmSignalSwitch(void){
+	if (dataADCChannel0[0] <= 10 && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
+		updateDuttyCycle(&handlerPWM_1, duttyLux);
+		enableOutput(&handlerPWM_1);
+		startPwmSignal(&handlerPWM_1);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if (dataADCChannel0[0] >= 4000 && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
+		updateDuttyCycle(&handlerPWM_2, duttyLux);
+		enableOutput(&handlerPWM_2);
+		startPwmSignal(&handlerPWM_2);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && dataADCChannel1[0] >= 4000){
+		updateDuttyCycle(&handlerPWM_3, duttyLux);
+		enableOutput(&handlerPWM_3);
+		startPwmSignal(&handlerPWM_3);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && dataADCChannel1[0] <= 10){
+		updateDuttyCycle(&handlerPWM_4, duttyLux);
+		enableOutput(&handlerPWM_4);
+		startPwmSignal(&handlerPWM_4);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel1[0] >= 4000 && dataADCChannel1[0] <= 4150) && dataADCChannel0[0] <= 10){
+		updateDuttyCycle(&handlerPWM_5, duttyLux);
+		enableOutput(&handlerPWM_5);
+		startPwmSignal(&handlerPWM_5);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel1[0] >= 0 && dataADCChannel1[0] <= 20) && dataADCChannel0[0] <= 20){
+		updateDuttyCycle(&handlerPWM_6, duttyLux);
+		enableOutput(&handlerPWM_6);
+		startPwmSignal(&handlerPWM_6);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel0[0] >= 4000 && dataADCChannel0[0] <= 4150) && (dataADCChannel1[0] >= 4000 && dataADCChannel1[0] <= 4150)){
+		updateDuttyCycle(&handlerPWM_7, duttyLux);
+		enableOutput(&handlerPWM_7);
+		startPwmSignal(&handlerPWM_7);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel0[0] >= 4000 && dataADCChannel0[0] <= 4150) && dataADCChannel1[0] <= 20){
+		updateDuttyCycle(&handlerPWM_8, duttyLux);
+		enableOutput(&handlerPWM_8);
+		startPwmSignal(&handlerPWM_8);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
+		updateDuttyCycle(&handlerPWM_9, duttyLux);
+		enableOutput(&handlerPWM_9);
+		startPwmSignal(&handlerPWM_9);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+	}
+}
+
+/* Timer que gobierna el blinky del led de estado */
+void BasicTimer2_Callback(void){
+	if(counterADC == 5){
+		counterADC = 0;
+	}
+	flagADC = 1;
+	counterADC++;
+	GPIOxTooglePin(&handlerStateLED);
+}
+
+
+
+// Callback para los comandos del USART.
+void usart2Rx_Callback(void){
+	rxData = getRxData();
+}
+
+// Esta función controla el contador del ADC.(Hace las veces de callback)
+void adcComplete_Callback(void){
+	if(cont == 0){
+		dataADCChannel0[cont2] = getADC();
+	}
+	else if (cont == 1){
+		dataADCChannel1[cont2] = getADC();
+	}else{
+		dataADCChannel2[cont2] = getADC();
+		cont2++;
+	}
+	cont++;
+	if(cont2 == 1){
+		cont2 = 0;
+	}
+	if(cont == 3){
+		cont = 0;
+	}
+}

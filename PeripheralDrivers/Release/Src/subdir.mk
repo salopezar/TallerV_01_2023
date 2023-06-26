@@ -12,6 +12,7 @@ C_SRCS += \
 ../Src/LCDDriver.c \
 ../Src/PLLDriver.c \
 ../Src/PwmDriver.c \
+../Src/RTCDriver.c \
 ../Src/SysTickDriver.c \
 ../Src/USARTxDriver.c \
 ../Src/adcDriver.c 
@@ -24,6 +25,7 @@ OBJS += \
 ./Src/LCDDriver.o \
 ./Src/PLLDriver.o \
 ./Src/PwmDriver.o \
+./Src/RTCDriver.o \
 ./Src/SysTickDriver.o \
 ./Src/USARTxDriver.o \
 ./Src/adcDriver.o 
@@ -36,6 +38,7 @@ C_DEPS += \
 ./Src/LCDDriver.d \
 ./Src/PLLDriver.d \
 ./Src/PwmDriver.d \
+./Src/RTCDriver.d \
 ./Src/SysTickDriver.d \
 ./Src/USARTxDriver.d \
 ./Src/adcDriver.d 
@@ -48,7 +51,7 @@ Src/%.o Src/%.su: ../Src/%.c Src/subdir.mk
 clean: clean-Src
 
 clean-Src:
-	-$(RM) ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/I2CDriver.d ./Src/I2CDriver.o ./Src/I2CDriver.su ./Src/LCDDriver.d ./Src/LCDDriver.o ./Src/LCDDriver.su ./Src/PLLDriver.d ./Src/PLLDriver.o ./Src/PLLDriver.su ./Src/PwmDriver.d ./Src/PwmDriver.o ./Src/PwmDriver.su ./Src/SysTickDriver.d ./Src/SysTickDriver.o ./Src/SysTickDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su ./Src/adcDriver.d ./Src/adcDriver.o ./Src/adcDriver.su
+	-$(RM) ./Src/BasicTimer.d ./Src/BasicTimer.o ./Src/BasicTimer.su ./Src/ExtiDriver.d ./Src/ExtiDriver.o ./Src/ExtiDriver.su ./Src/GPIOxDriver.d ./Src/GPIOxDriver.o ./Src/GPIOxDriver.su ./Src/I2CDriver.d ./Src/I2CDriver.o ./Src/I2CDriver.su ./Src/LCDDriver.d ./Src/LCDDriver.o ./Src/LCDDriver.su ./Src/PLLDriver.d ./Src/PLLDriver.o ./Src/PLLDriver.su ./Src/PwmDriver.d ./Src/PwmDriver.o ./Src/PwmDriver.su ./Src/RTCDriver.d ./Src/RTCDriver.o ./Src/RTCDriver.su ./Src/SysTickDriver.d ./Src/SysTickDriver.o ./Src/SysTickDriver.su ./Src/USARTxDriver.d ./Src/USARTxDriver.o ./Src/USARTxDriver.su ./Src/adcDriver.d ./Src/adcDriver.o ./Src/adcDriver.su
 
 .PHONY: clean-Src
 

@@ -1,4 +1,4 @@
-17:37:19 **** Incremental Build of configuration Debug for project pruebaJoystick ****
+13:47:12 **** Incremental Build of configuration Debug for project pruebaJoystick ****
 make clean all 
 rm -rf ./Core/Startup/startup_stm32f411retx.d ./Core/Startup/startup_stm32f411retx.o
 rm -rf ./App/Src/main.d ./App/Src/main.o ./App/Src/main.su
@@ -11,12 +11,12 @@ Finished building target: pruebaJoystick.elf
  
 arm-none-eabi-size   pruebaJoystick.elf 
    text	   data	    bss	    dec	    hex	filename
-  31004	    544	   2168	  33716	   83b4	pruebaJoystick.elf
+  31772	    544	   2224	  34540	   86ec	pruebaJoystick.elf
 Finished building: default.size.stdout
  
 arm-none-eabi-objdump -h -S  pruebaJoystick.elf  > "pruebaJoystick.list"
 Finished building: pruebaJoystick.list
  
 
-17:37:19 Build Finished. 0 errors, 0 warnings. (took 465ms)
+13:47:12 Build Finished. 0 errors, 0 warnings. (took 314ms)
 
