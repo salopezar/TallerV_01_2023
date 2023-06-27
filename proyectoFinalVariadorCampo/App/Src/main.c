@@ -34,8 +34,6 @@
  * ley de ampere maxwell en un curso básico de electromagnetismo.
  *
  */
-
-
 /* Cabeceras de las librerías */
 #include <stdint.h>
 #include <stdio.h>
@@ -122,9 +120,6 @@ char userMsg[64] = {0};
 unsigned int firstParameter = 0;
 unsigned int secondParameter = 0;
 unsigned int thirdparameter = 0;
-// Función para los comandos
-void parseCommands(char *ptrBufferReception);
-
 /* Función principal del programa */
 int main(void){
 
@@ -135,29 +130,13 @@ int main(void){
 	while(1){
 		duttyCicleReturn();
 		pwmSignalSwitch();
-//		if(flagADC){
-//			sprintf(buffer, "Channel X = %u , Channel Y = %u, Channel Z = %u \n", dataADCChannel0[0], dataADCChannel1[0], dataADCChannel2[0]);
-//			writeMsg(&USART2Comm, buffer);
-//			rxData = 0;
-//			flagADC = 0;
-//		}
+		if(flagADC){
+			sprintf(buffer, "Channel X = %u , Channel Y = %u, Luxometer = %u \n", dataADCChannel0[0], dataADCChannel1[0], dataADCChannel2[0]);
+			writeMsg(&USART2Comm, buffer);
+			rxData = 0;
+			flagADC = 0;
+		}
 
-		// Comunicacion para los comandos.
-		if (rxData != '\0'){
-			bufferReception[counterReception] = rxData;
-			counterReception++;
-			if(rxData == '@'){
-				stringComplete = true;
-				bufferReception[counterReception] = '\0';
-				counterReception = 0;
-			}
-			rxData = '\0';
-		}
-		// Envio de los strings
-		if(stringComplete){
-			parseCommands(bufferReception);
-			stringComplete = false;
-		}
 	}
 	return 0;
 }// Final del main
@@ -167,7 +146,7 @@ void initHardware(void){
 
 	// Se desactiva el reloj HSE porque PH0 está conectado a un oscilador HSE.
 	RCC->CR &= ~(RCC_CR_HSEON);
-	// GPIO del blinky pin a 250 ms.
+
 	handlerStateLED.pGPIOx                               	= GPIOH;
 	handlerStateLED.GPIO_PinConfig.GPIO_PinNumber 			= PIN_1;
 	handlerStateLED.GPIO_PinConfig.GPIO_PinMode 			= GPIO_MODE_OUT;
@@ -260,12 +239,14 @@ void initHardware(void){
 	HandlerTIM3PWM_2.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
 	GPIO_Config(&HandlerTIM3PWM_2);
 	GPIO_WritePin(&HandlerTIM3PWM_2, 0);
+
 	// Derecha
 	handlerPWM_2.ptrTIMx           	  =   TIM3;
 	handlerPWM_2.config.channel       =   PWM_CHANNEL_3;
 	handlerPWM_2.config.duttyCicle    =   10000;
 	handlerPWM_2.config.periodo       =   25000;
 	handlerPWM_2.config.prescaler     =   160;
+//	handlerPWM_2.config.polarity      =   PWM_POLARITY_ACTIVE_LOW;
 	pwm_Config(&handlerPWM_2);
 
 	// GPIO TIM 3 CC1
@@ -350,7 +331,7 @@ void initHardware(void){
 	HandlerTIM4PWM_7.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
 	GPIO_WritePin(&HandlerTIM4PWM_7, 0);
 	GPIO_Config(&HandlerTIM4PWM_7);
-	// DIAGONAL CUADRANTE 1
+	// DIAGONAL Y
 	handlerPWM_7.ptrTIMx           	  =   TIM4;
 	handlerPWM_7.config.channel       =   PWM_CHANNEL_3;
 	handlerPWM_7.config.duttyCicle    =   10000;
@@ -368,7 +349,7 @@ void initHardware(void){
 	HandlerTIM4PWM_8.GPIO_PinConfig.GPIO_PinAltFunMode  = AF2;
 	GPIO_WritePin(&HandlerTIM4PWM_8, 0);
 	GPIO_Config(&HandlerTIM4PWM_8);
-	// DIAGONAL CUADRANTE 4
+	// DIAGONAL Y
 	handlerPWM_8.ptrTIMx           	  =   TIM4;
 	handlerPWM_8.config.channel       =   PWM_CHANNEL_4;
 	handlerPWM_8.config.duttyCicle    =   10000;
@@ -384,8 +365,9 @@ void initHardware(void){
 	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinPuPdControl = GPIO_PUPDR_NOTHING;
 	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinSpeed       = GPIO_OSPEED_FAST;
 	HandlerTIM2PWM_9.GPIO_PinConfig.GPIO_PinAltFunMode  = AF1;
+
 	GPIO_Config(&HandlerTIM2PWM_9);
-	// CENTRO DEL TABLERO
+	// DIAGONAL Y
 	handlerPWM_9.ptrTIMx           	  =   TIM2;
 	handlerPWM_9.config.channel       =   PWM_CHANNEL_2;
 	handlerPWM_9.config.duttyCicle    =   10000;
@@ -399,19 +381,32 @@ void initHardware(void){
 void duttyCicleReturn(void){
 	if(dataADCChannel2[0] >= 0 && dataADCChannel2[0] <= 250){
 		duttyLux = 1000;
-	}else if(dataADCChannel2[0] > 250 && dataADCChannel2[0] <= 1500){
-		duttyLux = 12500;
+	}else if(dataADCChannel2[0] > 500 && dataADCChannel2[0] <= 1500){
+		duttyLux = 20000;
 	}else if(dataADCChannel2[0] > 1500 && dataADCChannel2[0] <= 2000){
-		duttyLux = 17500;
+		duttyLux = 20500;
 	}else if(dataADCChannel2[0] > 2000 && dataADCChannel2[0] <= 3000){
-		duttyLux = 21000;
+		duttyLux = 24000;
 	}else{
-		duttyLux = 21500;
+		duttyLux = 24000;
 	}
 }
+
 // Esta función lanza los pwm dependiendo de la posición en que esté el joystick.
 void pwmSignalSwitch(void){
 	if (dataADCChannel0[0] <= 10 && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
+		updateDuttyCycle(&handlerPWM_4, duttyLux);
+		enableOutput(&handlerPWM_4);
+		startPwmSignal(&handlerPWM_4);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if (dataADCChannel0[0] >= 4000 && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
 		updateDuttyCycle(&handlerPWM_1, duttyLux);
 		enableOutput(&handlerPWM_1);
 		startPwmSignal(&handlerPWM_1);
@@ -423,43 +418,43 @@ void pwmSignalSwitch(void){
 		updateDuttyCycle(&handlerPWM_7, 0);
 		updateDuttyCycle(&handlerPWM_8, 0);
 		updateDuttyCycle(&handlerPWM_9, 0);
-	}else if (dataADCChannel0[0] >= 4000 && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
-		updateDuttyCycle(&handlerPWM_2, duttyLux);
-		enableOutput(&handlerPWM_2);
-		startPwmSignal(&handlerPWM_2);
+	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && dataADCChannel1[0] >= 4000){
+		updateDuttyCycle(&handlerPWM_6, duttyLux);
+		enableOutput(&handlerPWM_6);
+		startPwmSignal(&handlerPWM_6);
 		updateDuttyCycle(&handlerPWM_1, 0);
-		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
 		updateDuttyCycle(&handlerPWM_4, 0);
 		updateDuttyCycle(&handlerPWM_5, 0);
-		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
 		updateDuttyCycle(&handlerPWM_7, 0);
 		updateDuttyCycle(&handlerPWM_8, 0);
 		updateDuttyCycle(&handlerPWM_9, 0);
-	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && dataADCChannel1[0] >= 4000){
+	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && dataADCChannel1[0] <= 20){
+		updateDuttyCycle(&handlerPWM_8, duttyLux);
+		enableOutput(&handlerPWM_8);
+		startPwmSignal(&handlerPWM_8);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+	}else if ((dataADCChannel1[0] >= 4000 && dataADCChannel1[0] <= 4150) && dataADCChannel0[0] <= 10){
 		updateDuttyCycle(&handlerPWM_3, duttyLux);
 		enableOutput(&handlerPWM_3);
 		startPwmSignal(&handlerPWM_3);
 		updateDuttyCycle(&handlerPWM_1, 0);
 		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
 		updateDuttyCycle(&handlerPWM_4, 0);
-		updateDuttyCycle(&handlerPWM_5, 0);
 		updateDuttyCycle(&handlerPWM_6, 0);
 		updateDuttyCycle(&handlerPWM_7, 0);
 		updateDuttyCycle(&handlerPWM_8, 0);
 		updateDuttyCycle(&handlerPWM_9, 0);
-	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && dataADCChannel1[0] <= 10){
-		updateDuttyCycle(&handlerPWM_4, duttyLux);
-		enableOutput(&handlerPWM_4);
-		startPwmSignal(&handlerPWM_4);
-		updateDuttyCycle(&handlerPWM_1, 0);
-		updateDuttyCycle(&handlerPWM_2, 0);
-		updateDuttyCycle(&handlerPWM_3, 0);
-		updateDuttyCycle(&handlerPWM_5, 0);
-		updateDuttyCycle(&handlerPWM_6, 0);
-		updateDuttyCycle(&handlerPWM_7, 0);
-		updateDuttyCycle(&handlerPWM_8, 0);
-		updateDuttyCycle(&handlerPWM_9, 0);
-	}else if ((dataADCChannel1[0] >= 4000 && dataADCChannel1[0] <= 4150) && dataADCChannel0[0] <= 10){
+	}else if ((dataADCChannel1[0] >= 0 && dataADCChannel1[0] <= 20) && dataADCChannel0[0] <= 20){
 		updateDuttyCycle(&handlerPWM_5, duttyLux);
 		enableOutput(&handlerPWM_5);
 		startPwmSignal(&handlerPWM_5);
@@ -471,24 +466,12 @@ void pwmSignalSwitch(void){
 		updateDuttyCycle(&handlerPWM_7, 0);
 		updateDuttyCycle(&handlerPWM_8, 0);
 		updateDuttyCycle(&handlerPWM_9, 0);
-	}else if ((dataADCChannel1[0] >= 0 && dataADCChannel1[0] <= 20) && dataADCChannel0[0] <= 20){
-		updateDuttyCycle(&handlerPWM_6, duttyLux);
-		enableOutput(&handlerPWM_6);
-		startPwmSignal(&handlerPWM_6);
-		updateDuttyCycle(&handlerPWM_1, 0);
-		updateDuttyCycle(&handlerPWM_2, 0);
-		updateDuttyCycle(&handlerPWM_3, 0);
-		updateDuttyCycle(&handlerPWM_4, 0);
-		updateDuttyCycle(&handlerPWM_5, 0);
-		updateDuttyCycle(&handlerPWM_7, 0);
-		updateDuttyCycle(&handlerPWM_8, 0);
-		updateDuttyCycle(&handlerPWM_9, 0);
 	}else if ((dataADCChannel0[0] >= 4000 && dataADCChannel0[0] <= 4150) && (dataADCChannel1[0] >= 4000 && dataADCChannel1[0] <= 4150)){
-		updateDuttyCycle(&handlerPWM_7, duttyLux);
-		enableOutput(&handlerPWM_7);
-		startPwmSignal(&handlerPWM_7);
+		updateDuttyCycle(&handlerPWM_2, duttyLux);
+		enableOutput(&handlerPWM_2);
+		startPwmSignal(&handlerPWM_2);
 		updateDuttyCycle(&handlerPWM_1, 0);
-		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_7, 0);
 		updateDuttyCycle(&handlerPWM_3, 0);
 		updateDuttyCycle(&handlerPWM_4, 0);
 		updateDuttyCycle(&handlerPWM_5, 0);
@@ -496,18 +479,6 @@ void pwmSignalSwitch(void){
 		updateDuttyCycle(&handlerPWM_8, 0);
 		updateDuttyCycle(&handlerPWM_9, 0);
 	}else if ((dataADCChannel0[0] >= 4000 && dataADCChannel0[0] <= 4150) && dataADCChannel1[0] <= 20){
-		updateDuttyCycle(&handlerPWM_8, duttyLux);
-		enableOutput(&handlerPWM_8);
-		startPwmSignal(&handlerPWM_8);
-		updateDuttyCycle(&handlerPWM_1, 0);
-		updateDuttyCycle(&handlerPWM_2, 0);
-		updateDuttyCycle(&handlerPWM_3, 0);
-		updateDuttyCycle(&handlerPWM_4, 0);
-		updateDuttyCycle(&handlerPWM_5, 0);
-		updateDuttyCycle(&handlerPWM_6, 0);
-		updateDuttyCycle(&handlerPWM_7, 0);
-		updateDuttyCycle(&handlerPWM_9, 0);
-	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
 		updateDuttyCycle(&handlerPWM_9, duttyLux);
 		enableOutput(&handlerPWM_9);
 		startPwmSignal(&handlerPWM_9);
@@ -519,59 +490,22 @@ void pwmSignalSwitch(void){
 		updateDuttyCycle(&handlerPWM_6, 0);
 		updateDuttyCycle(&handlerPWM_7, 0);
 		updateDuttyCycle(&handlerPWM_8, 0);
+	}else if ((dataADCChannel0[0] >= 2000 && dataADCChannel0[0] <= 2150) && (dataADCChannel1[0] >= 2000 && dataADCChannel1[0] <= 2150)){
+		updateDuttyCycle(&handlerPWM_7, duttyLux);
+		enableOutput(&handlerPWM_7);
+		startPwmSignal(&handlerPWM_7);
+		updateDuttyCycle(&handlerPWM_1, 0);
+		updateDuttyCycle(&handlerPWM_2, 0);
+		updateDuttyCycle(&handlerPWM_3, 0);
+		updateDuttyCycle(&handlerPWM_4, 0);
+		updateDuttyCycle(&handlerPWM_5, 0);
+		updateDuttyCycle(&handlerPWM_6, 0);
+		updateDuttyCycle(&handlerPWM_9, 0);
+		updateDuttyCycle(&handlerPWM_8, 0);
 	}
 }
 
-void parseCommands(char *ptrBufferReception){
-
-	/* Esta funcion de C lee la cadena de caracteres a la que apunta el "ptr" y la divide
-	 * y almacena en tres elementos diferentes : un string llamado "cmd", y dos numeros
-	 * integer llamados "firstParameter" y "secondParameter".
-	 * De esta forma, podemos introducir información al micro desde el puerto serial.
-	 */
-	/*
-	 * Aquí tenemos básicamente la lista de comandos que se pide debe contener el código
-	 * para interactuar con el usuario. Se busca hacerlo lo más fácil de digerir que se
-	 * pueda para la persona que necesita operar con el sistema. Inicialmente se debe tener
-	 * en cuenta la funcion que cumple coolterm para enviar strings de acuerdo a la función
-	 * que necesita que realice el sistema. Debe informarse al usuario que la recomendacion
-	 * inicial es que use el comando "help" que despliega un menu de ayuda que le dice cuales
-	 * son los comandos y la forma de introducirlos de acuerdo con la función que se requiere.
-	 */
-	sscanf(ptrBufferReception,"%s %u %u %u %s",cmd,&firstParameter,&secondParameter,&thirdparameter,userMsg);
-	//Este primer comando imprime una lista con los otros comandos que tiene el equipo
-	if (strcmp(cmd, "help") == 0){
-		writeMsg(&USART2Comm, "QUE ESTE MENU DE AYUDA TE ACOMPANE\n");
-		writeMsg(&USART2Comm, "⠀⢀⣠⣄⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣤⣴⣶⡾⠿⠿⠿⠿⢷⣶⣦⣤⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⢰⣿⡟⠛⠛⠛⠻⠿⠿⢿⣶⣶⣦⣤⣤⣀⣀⡀⣀⣴⣾⡿⠟⠋⠉⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠻⢿⣷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⡀\n");
-		writeMsg(&USART2Comm, "⠀⠻⣿⣦⡀⠀⠉⠓⠶⢦⣄⣀⠉⠉⠛⠛⠻⠿⠟⠋⠁⠀⠀⠀⣤⡀⠀⠀⢠⠀⠀⠀⣠⠀⠀⠀⠀⠈⠙⠻⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠟⠛⠛⢻⣿\n");
-		writeMsg(&USART2Comm, "⠀⠀⠈⠻⣿⣦⠀⠀⠀⠀⠈⠙⠻⢷⣶⣤⡀⠀⠀⠀⠀⢀⣀⡀⠀⠙⢷⡀⠸⡇⠀⣰⠇⠀⢀⣀⣀⠀⠀⠀⠀⠀⠀⣀⣠⣤⣤⣶⡶⠶⠶⠒⠂⠀⠀⣠⣾⠟\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠈⢿⣷⡀⠀⠀⠀⠀⠀⠀⠈⢻⣿⡄⣠⣴⣿⣯⣭⣽⣷⣆⠀⠁⠀⠀⠀⠀⢠⣾⣿⣿⣿⣿⣦⡀⠀⣠⣾⠟⠋⠁⠀⠀⠀⠀⠀⠀⠀⣠⣾⡟⠁⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠈⢻⣷⣄⠀⠀⠀⠀⠀⠀⠀⣿⡗⢻⣿⣧⣽⣿⣿⣿⣧⠀⠀⣀⣀⠀⢠⣿⣧⣼⣿⣿⣿⣿⠗⠰⣿⠃⠀⠀⠀⠀⠀⠀⠀⠀⣠⣾⡿⠋⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠙⢿⣶⣄⡀⠀⠀⠀⠀⠸⠃⠈⠻⣿⣿⣿⣿⣿⡿⠃⠾⣥⡬⠗⠸⣿⣿⣿⣿⣿⡿⠛⠀⢀⡟⠀⠀⠀⠀⠀⠀⣀⣠⣾⡿⠋⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠿⣷⣶⣤⣤⣄⣰⣄⠀⠀⠉⠉⠉⠁⠀⢀⣀⣠⣄⣀⡀⠀⠉⠉⠉⠀⠀⢀⣠⣾⣥⣤⣤⣤⣶⣶⡿⠿⠛⠉⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠉⢻⣿⠛⢿⣷⣦⣤⣴⣶⣶⣦⣤⣤⣤⣤⣬⣥⡴⠶⠾⠿⠿⠿⠿⠛⢛⣿⣿⣿⣯⡉⠁⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⣿⣧⡀⠈⠉⠀⠈⠁⣾⠛⠉⠉⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣴⣿⠟⠉⣹⣿⣇⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣸⣿⣿⣦⣀⠀⠀⠀⢻⡀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣤⣶⣿⠋⣿⠛⠃⠀⣈⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⡿⢿⡀⠈⢹⡿⠶⣶⣼⡇⠀⢀⣀⣀⣤⣴⣾⠟⠋⣡⣿⡟⠀⢻⣶⠶⣿⣿⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⣿⣷⡈⢿⣦⣸⠇⢀⡿⠿⠿⡿⠿⠿⣿⠛⠋⠁⠀⣴⠟⣿⣧⡀⠈⢁⣰⣿⠏⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⢻⣦⣈⣽⣀⣾⠃⠀⢸⡇⠀⢸⡇⠀⢀⣠⡾⠋⢰⣿⣿⣿⣿⡿⠟⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠿⢿⣿⣿⡟⠛⠃⠀⠀⣾⠀⠀⢸⡇⠐⠿⠋⠀⠀⣿⢻⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⠁⢀⡴⠋⠀⣿⠀⠀⢸⠇⠀⠀⠀⠀⠀⠁⢸⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣿⡿⠟⠋⠀⠀⠀⣿⠀⠀⣸⠀⠀⠀⠀⠀⠀⠀⢸⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢸⣿⣁⣀⠀⠀⠀⠀⣿⡀⠀⣿⠀⠀⠀⠀⠀⠀⢀⣈⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠘⠛⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠟⠛⠋⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀\n");
-		writeMsg(&USART2Comm, "Help Menu CMDs:\n");
-		writeMsg(&USART2Comm, "Bienvenido al variador de campo magnetico, por favor tenga discreción\n");
-		writeMsg(&USART2Comm, "Gire el Joystick en la posición de la bobina que desee encender\n");
-		writeMsg(&USART2Comm, "La entrada de luz del luxometro define qué tanta corriente deja pasar el MOSFET\n");
-		writeMsg(&USART2Comm, "ESPERO HABERTE AYUDADO\n");
-	}else{
-		writeMsg(&USART2Comm, "invalid comand, please check the help menu\n");
-	}
-}
-
-/* Timer para el led de estado */
+/* Timer que gobierna el blinky del led de estado y las interrupciones ADC */
 void BasicTimer5_Callback(void){
 	if(counterADC == 5){
 		counterADC = 0;
@@ -580,6 +514,8 @@ void BasicTimer5_Callback(void){
 	counterADC++;
 	GPIOxTooglePin(&handlerStateLED);
 }
+
+
 
 // Callback para los comandos del USART.
 void usart2Rx_Callback(void){

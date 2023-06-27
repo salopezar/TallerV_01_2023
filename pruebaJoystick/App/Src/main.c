@@ -15,7 +15,24 @@
  *
  ******************************************************************************
  */
-
+/************************* PROYECTO FINAL DEL CURSO ***************************/
+/************************ VARIADOR DE CAMPO MAGNETICO *************************/
+/*
+ * El presente programa permite en general el control y la regulación del flujo de
+ * corriente que induce el campo magnético en un sistema de 9 bobinados dispuestos
+ * en un tablero de 3x3 posiciones. Mediante el uso de dos sensores externos, el
+ * usuario podrá regular el efecto de una corriente electrica donada por una fuente
+ * externa que cae sobre los inductores.
+ *
+ * Usando un joystick que consta de dos conversiones analogo-digitales para los ejes
+ * que comprenden un plano cartesiano comun, puede escogerse cuál de los 9 bobinados
+ * quiere encenderse mediante una señal de PWM cuyo pin de salida determina las
+ * coordenadas de la posicion escogida. Luego, un sensor de luz análogo indica que
+ * porcentaje del periodo de la señal de PWM se encuentra en alto (dutty cicle) y cual
+ * estará en GND. Esto con el fin de mostrar una aplicación didáctica y elegante de la
+ * ley de ampere maxwell en un curso básico de electromagnetismo.
+ *
+ */
 
 
 /* Cabeceras de las librerías */
@@ -37,25 +54,6 @@
 #include "PwmDriver.h"
 #include "I2CDriver.h"
 #include "RTCDriver.h"
-
-/************************* PROYECTO FINAL DEL CURSO ***************************/
-/************************ VARIADOR DE CAMPO MAGNETICO *************************/
-/*
- * El presente programa permite en general el control y la regulación del flujo de
- * corriente que induce el campo magnético en un sistema de 9 bobinados dispuestos
- * en un tablero de 3x3 posiciones. Mediante el uso de dos sensores externos, el
- * usuario podrá regular el efecto de una corriente electrica donada por una fuente
- * externa que cae sobre los inductores.
- *
- * Usando un joystick que consta de dos conversiones analogo-digitales para los ejes
- * que comprenden un plano cartesiano comun, puede escogerse cuál de los 9 bobinados
- * quiere encenderse mediante una señal de PWM cuyo pin de salida determina las
- * coordenadas de la posicion escogida. Luego, un sensor de luz análogo indica que
- * porcentaje del periodo de la señal de PWM se encuentra en alto (dutty cicle) y cual
- * estará en GND. Esto con el fin de mostrar una aplicación didáctica y elegante de la
- * ley de ampere maxwell en un curso básico de electromagnetismo.
- *
- */
 
 // Definición de los handlers GPIO necesarios.
 GPIO_Handler_t handlerStateLED				= {0};
@@ -391,7 +389,7 @@ void duttyCicleReturn(void){
 	}else if(dataADCChannel2[0] > 2000 && dataADCChannel2[0] <= 3000){
 		duttyLux = 24000;
 	}else{
-		duttyLux = 21500;
+		duttyLux = 24000;
 	}
 }
 
